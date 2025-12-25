@@ -1,5 +1,7 @@
 """
 Unified natural language query endpoint
+
+Thin HTTP handler that uses QueryParser and delegates to service layer.
 """
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -7,12 +9,9 @@ from typing import Any, Dict
 import logging
 
 from ..query_parser import QueryParser
-
-# Import other routers to access their endpoint functions
-from .drivers import get_driver_stats, search_drivers
+from ..services import F1Service
 from .seasons import get_season_standings, get_season_winners
-from .constructors import get_constructor_stats
-from .analytics import get_head_to_head
+from .drivers import search_drivers
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -96,34 +95,43 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
             data = get_season_standings(int(year))
             
         elif '/stats' in endpoint and '/drivers/' in endpoint:
-            # Driver stats - use existing endpoint
+            # Driver stats - use service layer
             parts = endpoint.split('/')
             driver_id = parts[parts.index('drivers') + 1]
             
             start_year = params.get('start_year')
             end_year = params.get('end_year')
             
-            data = get_driver_stats(driver_id, start_year, end_year)
+            try:
+                data = F1Service.get_driver_statistics(driver_id, start_year, end_year)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
             
         elif '/stats' in endpoint and '/constructors/' in endpoint:
-            # Constructor stats - use existing endpoint
+            # Constructor stats - use service layer
             parts = endpoint.split('/')
             constructor_id = parts[parts.index('constructors') + 1]
             
             start_year = params.get('start_year')
             end_year = params.get('end_year')
             
-            data = get_constructor_stats(constructor_id, start_year, end_year)
+            try:
+                data = F1Service.get_constructor_statistics(constructor_id, start_year, end_year)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
             
         elif 'head-to-head' in endpoint:
-            # Head to head comparison - use existing endpoint
+            # Head to head comparison - use service layer
             driver1 = params.get('driver1')
             driver2 = params.get('driver2')
             
             if not driver1 or not driver2:
                 raise HTTPException(status_code=400, detail="Both drivers required for comparison")
             
-            data = get_head_to_head(driver1, driver2)
+            try:
+                data = F1Service.get_head_to_head_comparison(driver1, driver2)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
             
         elif 'winners' in endpoint:
             # Season winners - use existing endpoint

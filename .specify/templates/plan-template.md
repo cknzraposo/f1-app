@@ -33,6 +33,12 @@
 
 [Gates determined based on constitution file]
 
+**Code Quality Gates** (Principle VI):
+- ✅ Each module has single, well-defined responsibility
+- ✅ Functions independently testable without extensive mocking
+- ✅ Related functionality co-located; unrelated concerns isolated
+- ✅ Clear boundaries between modules/layers
+
 ## Project Structure
 
 ### Documentation (this feature)

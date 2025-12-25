@@ -1,3 +1,37 @@
+<!--
+=============================================================================
+SYNC IMPACT REPORT - Constitution Amendment
+=============================================================================
+Version Change: 1.0.0 → 1.1.0
+
+Modified/Added Principles:
+  - NEW: Principle VI - Code Quality & Separation of Concerns
+
+Sections Added:
+  - Code Quality & Separation of Concerns principle with module cohesion,
+    responsibility isolation, and testability requirements
+
+Sections Removed:
+  - None
+
+Templates Requiring Updates:
+  ✅ plan-template.md - Updated (added code quality gates)
+  ✅ spec-template.md - No changes needed (already emphasizes testability)
+  ✅ tasks-template.md - Updated (added code quality task types)
+  ✅ agent-file-template.md - No changes needed (general purpose template)
+  ✅ checklist-template.md - No changes needed (general purpose template)
+
+Follow-up TODOs:
+  - None
+
+Amendment Rationale:
+  MINOR version bump - Added new principle requiring module cohesion,
+  responsibility isolation, and testability. Enhances code maintainability
+  without breaking existing governance structure.
+
+=============================================================================
+-->
+
 # App Constitution
 
 ## Core Principles
@@ -27,6 +61,11 @@ Frequently accessed data MUST be cached with sensible retention policies. System
 
 **Rationale**: Performance optimization reduces latency and enables scale. Graceful degradation ensures partial functionality is always better than complete failure.
 
+### VI. Code Quality & Separation of Concerns
+Modules MUST have single, well-defined responsibilities. Functions MUST be independently testable without extensive mocking. Related functionality MUST be co-located; unrelated concerns MUST be isolated.
+
+**Rationale**: Clear boundaries reduce cognitive load, prevent cascading changes, and enable parallel development. Testability without complex setup indicates proper abstraction. Co-location improves discoverability while isolation prevents coupling.
+
 ## Architecture Priorities
 
 Speed > Reliability > Simplicity > Flexibility
@@ -41,9 +80,13 @@ When these priorities conflict, prefer the higher-ranked priority. The system op
 ❌ Transform canonical data formats  
 ❌ Add dependencies without graceful fallback  
 ❌ Prioritize flexibility over simplicity  
+❌ Mix unrelated concerns in single modules  
+❌ Create functions requiring extensive mocking to test  
 
 ## Governance
 
 This constitution supersedes all other practices. All changes MUST be verified against these principles. Amendments require justification demonstrating alignment with simplicity-over-complexity philosophy. Complexity MUST always be justified.
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-25 | **Last Amended**: 2025-12-25
+
+
+**Version**: 1.1.0 | **Ratified**: 2025-12-25 | **Last Amended**: 2025-12-26
