@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Stats - Formula 1 Historical Data (1984-2024)</title>
+    <link rel="stylesheet" href="/static/global.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">F1 Stats</a>
+        <nav class="nav-links">
+            <a href="/docs" target="_blank">API Docs</a>
+            <a href="/redoc" target="_blank">Reference</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Formula 1 Data Hub</h1>
+            <p class="subtitle">Explore 40+ years of F1 history (1984-2024)</p>
+            
+            <!-- Search Box -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Ask anything... e.g., 'Who won the 2023 championship?'"
+                        autocomplete="off"
+                    />
+                    <svg class="search-icon" onclick="handleSearch()" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                <div id="autocomplete"></div>
+            </div>
+            
+            <!-- Try These Queries -->
+            <p class="query-chips-title">Try these queries</p>
+            <div class="chips-grid">
+                <!-- Championships -->
+                <div class="chip-category">
+                    <div class="category-label">🏆 Championships</div>
+                    <div class="category-chips">
+                        <div class="chip" onclick="setQuery('Who won the 2010 championship?')">
+                            Who won the 2010 championship?
+                        </div>
+                        <div class="chip" onclick="setQuery('2021 championship standings')">
+                            2021 championship standings
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Driver Stats -->
+                <div class="chip-category">
+                    <div class="category-label">📊 Driver Stats</div>
+                    <div class="category-chips">
+                        <div class="chip" onclick="setQuery('How many wins does Hamilton have?')">
+                            How many wins does Hamilton have?
+                        </div>
+                        <div class="chip" onclick="setQuery('Tell me about Verstappen stats')">
+                            Tell me about Verstappen's stats
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparisons -->
+                <div class="chip-category">
+                    <div class="category-label">⚔️ Comparisons</div>
+                    <div class="category-chips">
+                        <div class="chip" onclick="setQuery('Compare Vettel vs Alonso')">
+                            Compare Vettel vs Alonso
+                        </div>
+                        <div class="chip" onclick="setQuery('Hamilton versus Schumacher')">
+                            Hamilton versus Schumacher
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Season Data -->
+                <div class="chip-category">
+                    <div class="category-label">🏁 Season Data</div>
+                    <div class="category-chips">
+                        <div class="chip" onclick="setQuery('2023 race winners')">
+                            2023 race winners
+                        </div>
+                        <div class="chip" onclick="setQuery('Who won the most races in 2019?')">
+                            Who won the most races in 2019?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,50 +1,49 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Self-Contained Operation
+The application MUST function fully without external runtime dependencies. Core functionality MUST NOT require external services, databases, or third-party APIs to operate.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Dependencies create failure points, increase complexity, and reduce reliability. Self-contained systems are predictable, debuggable, and always available.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Deterministic-First Processing
+At least 90% of requests MUST be handled by deterministic algorithms before attempting non-deterministic approaches. Deterministic processing MUST be attempted first, with non-deterministic methods as fallback only.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Deterministic algorithms are orders of magnitude faster, require no external services, and produce consistent results. Non-deterministic approaches should enhance, not replace, core functionality.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Zero Build Complexity (NON-NEGOTIABLE)
+User interfaces MUST be deployable without compilation, transpilation, or build steps. Source code MUST be directly executable without preprocessing.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Build steps add complexity, slow development cycles, and create deployment friction. Direct execution enables instant iteration and eliminates entire categories of tooling failures.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Data Format Stability
+API contracts MUST preserve upstream data formats without transformation. Data structures from authoritative sources MUST be returned unmodified.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Format transformations introduce bugs, break compatibility, and increase maintenance burden. Preserving canonical formats ensures predictability and interoperability.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Aggressive Optimization & Fault Tolerance
+Frequently accessed data MUST be cached with sensible retention policies. System MUST continue operating when optional features fail or are unavailable.
+
+**Rationale**: Performance optimization reduces latency and enables scale. Graceful degradation ensures partial functionality is always better than complete failure.
+
+## Architecture Priorities
+
+Speed > Reliability > Simplicity > Flexibility
+
+When these priorities conflict, prefer the higher-ranked priority. The system optimizes for instant response times, zero external dependencies, minimal complexity, and optional enhancements.
+
+## Anti-Patterns
+
+❌ Require external runtime dependencies for core functionality  
+❌ Make optional enhancements mandatory  
+❌ Introduce compilation or build requirements  
+❌ Transform canonical data formats  
+❌ Add dependencies without graceful fallback  
+❌ Prioritize flexibility over simplicity  
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other practices. All changes MUST be verified against these principles. Amendments require justification demonstrating alignment with simplicity-over-complexity philosophy. Complexity MUST always be justified.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-12-25 | **Last Amended**: 2025-12-25

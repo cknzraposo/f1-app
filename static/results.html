@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - F1 Stats</title>
+    <link rel="stylesheet" href="/static/global.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="top-bar">
+                <a href="/" class="logo">F1 Stats</a>
+                <nav class="nav-links">
+                    <a href="/docs" target="_blank">API Docs</a>
+                    <a href="/redoc" target="_blank">Reference</a>
+                    <a href="/" class="back-button">← Back to Search</a>
+                </nav>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Try another query..."
+                        autocomplete="off"
+                    />
+                    <svg class="search-icon" onclick="handleSearch()" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                <div id="autocomplete"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <div class="breadcrumb-label">Your Query</div>
+            <div class="breadcrumb-query" id="queryDisplay">Loading...</div>
+        </div>
+        
+        <!-- Results -->
+        <div class="results-section">
+            <div id="resultsContent">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching results...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/app.js"></script>
+    <script>
+        // Initialize results page on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initResultsPage();
+        });
+    </script>
+</body>
+</html>

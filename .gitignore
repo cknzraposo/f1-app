@@ -104,6 +104,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# F1 App Specific
+config.local.json
+
 # Spyder project settings
 .spyderproject
 .spyproject

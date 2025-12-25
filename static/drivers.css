@@ -1,0 +1,160 @@
+ /* Driver Profile Specific Styles */
+        .driver-profile-header {
+            background: rgba(225, 6, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(225, 6, 0, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .driver-name {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #e10600 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .driver-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ddd;
+        }
+        
+        .info-label {
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-value {
+            font-size: 1.1em;
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            background: rgba(225, 6, 0, 0.15);
+            border-color: rgba(225, 6, 0, 0.3);
+            transform: translateY(-4px);
+        }
+        
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #e10600;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            font-size: 1.5em;
+            color: #e10600;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        /* Season History Table */
+        .season-history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .season-history-table th {
+            background: rgba(225, 6, 0, 0.15);
+            color: #fff;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e10600;
+        }
+        
+        .season-history-table td {
+            padding: 14px 16px;
+            color: #ddd;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .season-history-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .season-history-table td.highlight {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .note-message {
+            color: #888;
+            text-align: center;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .driver-name {
+                font-size: 2em;
+            }
+            
+            .driver-profile-header {
+                padding: 25px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .driver-info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }

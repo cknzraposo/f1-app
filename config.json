@@ -1,0 +1,21 @@
+{
+  "llm": {
+    "primary": "ollama",
+    "ollama": {
+      "endpoint": "http://localhost:11434",
+      "model": "llama3.2",
+      "timeout": 30
+    },
+    "azure_openai": {
+      "enabled": false,
+      "endpoint": "https://bisho-mgfwbhg9-eastus2.openai.azure.com/",
+      "api_key": "9JBB948qBpImtXM0iyb5X2FSVGXRjL1Ta4NbqMghP1gFDc7duiBuJQQJ99BJACHYHv6XJ3w3AAAAACOGFiOK",
+      "api_version": "2024-12-01-preview",
+      "deployment_name": "rv-ai-model-router"
+    }
+  },
+  "app": {
+    "name": "F1 Assistant",
+    "version": "1.0.0"
+  }
+}
