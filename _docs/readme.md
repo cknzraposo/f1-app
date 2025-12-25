@@ -1,6 +1,7 @@
 # F1 Data API Documentation
 
 A lightweight REST API for querying Formula 1 historical data (1984-2024). Built with FastAPI, this API provides efficient access to driver information, race results, constructor data, and analytics without requiring a database backend.
+The main data source is https://api.jolpi.ca/ergast/ - which generates a set of .json files which then is used by this app.
 
 ## Features
 

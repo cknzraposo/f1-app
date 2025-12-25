@@ -1,0 +1,845 @@
+openapi: 3.0.3
+info:
+  title: F1 Data API
+  description: |
+    REST API for querying Formula 1 historical data (1984-2024).
+    
+    This API provides access to comprehensive F1 data including:
+    - Driver profiles and statistics
+    - Constructor team information and statistics
+    - Season results and championship standings
+    - Race-by-race results and details
+    - Natural language query interface
+    - Comparative analytics
+    
+    **Data Format**: All responses follow the Ergast API JSON structure for compatibility.
+    
+    **Performance**: Responses cached aggressively using LRU cache. First request may take ~500ms, subsequent requests <100ms.
+  version: 1.0.0
+  contact:
+    name: F1 Data API
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.f1data.example.com
+    description: Production server (example)
+
+tags:
+  - name: Info
+    description: API information and health check endpoints
+  - name: Drivers
+    description: Driver profiles, statistics, and career data
+  - name: Constructors
+    description: Constructor team information and statistics
+  - name: Seasons
+    description: Season results, standings, and race schedules
+  - name: Analytics
+    description: Comparative statistics and analysis
+  - name: Query
+    description: Natural language query interface
+
+paths:
+  /:
+    get:
+      summary: Root endpoint - serves web UI
+      tags: [Info]
+      responses:
+        '200':
+          description: Web interface HTML or API information
+          content:
+            text/html:
+              schema:
+                type: string
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInfo'
+
+  /api:
+    get:
+      summary: API information
+      tags: [Info]
+      responses:
+        '200':
+          description: API metadata and available endpoints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInfo'
+
+  /api/drivers:
+    get:
+      summary: List all drivers
+      description: Returns a list of all Formula 1 drivers from 1984-2024
+      tags: [Drivers]
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of drivers to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+        - name: offset
+          in: query
+          description: Number of drivers to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: List of drivers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverList'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/drivers/{driver_id}:
+    get:
+      summary: Get driver by ID
+      description: Returns detailed information about a specific driver
+      tags: [Drivers]
+      parameters:
+        - name: driver_id
+          in: path
+          required: true
+          description: Driver identifier (e.g., 'hamilton', 'verstappen')
+          schema:
+            type: string
+            pattern: '^[a-z_]+$'
+      responses:
+        '200':
+          description: Driver details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '404':
+          description: Driver not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/drivers/{driver_id}/stats:
+    get:
+      summary: Get driver career statistics
+      description: Returns computed career statistics for a driver
+      tags: [Drivers]
+      parameters:
+        - name: driver_id
+          in: path
+          required: true
+          description: Driver identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Driver statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverStats'
+        '404':
+          description: Driver not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/constructors:
+    get:
+      summary: List all constructors
+      description: Returns a list of all Formula 1 constructor teams from 1984-2024
+      tags: [Constructors]
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of constructors to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: offset
+          in: query
+          description: Number of constructors to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: List of constructors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstructorList'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/constructors/{constructor_id}:
+    get:
+      summary: Get constructor by ID
+      description: Returns detailed information about a specific constructor team
+      tags: [Constructors]
+      parameters:
+        - name: constructor_id
+          in: path
+          required: true
+          description: Constructor identifier (e.g., 'mclaren', 'ferrari')
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Constructor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Constructor'
+        '404':
+          description: Constructor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/constructors/{constructor_id}/stats:
+    get:
+      summary: Get constructor career statistics
+      description: Returns computed career statistics for a constructor team
+      tags: [Constructors]
+      parameters:
+        - name: constructor_id
+          in: path
+          required: true
+          description: Constructor identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Constructor statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstructorStats'
+        '404':
+          description: Constructor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/seasons:
+    get:
+      summary: List all available seasons
+      description: Returns years for which F1 data is available (1984-2024)
+      tags: [Seasons]
+      responses:
+        '200':
+          description: List of available season years
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  seasons:
+                    type: array
+                    items:
+                      type: integer
+                    example: [1984, 1985, 1986, "...", 2024]
+                  count:
+                    type: integer
+                    example: 41
+
+  /api/seasons/{year}:
+    get:
+      summary: Get season details
+      description: Returns comprehensive race results and data for a specific season
+      tags: [Seasons]
+      parameters:
+        - name: year
+          in: path
+          required: true
+          description: Season year (1984-2024)
+          schema:
+            type: integer
+            minimum: 1984
+            maximum: 2024
+      responses:
+        '200':
+          description: Season data with all races
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Season'
+        '400':
+          description: Invalid year (outside 1984-2024 range)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Season data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/seasons/{year}/standings:
+    get:
+      summary: Get championship standings for a season
+      description: Returns final driver and constructor championship standings
+      tags: [Seasons]
+      parameters:
+        - name: year
+          in: path
+          required: true
+          description: Season year
+          schema:
+            type: integer
+            minimum: 1984
+            maximum: 2024
+      responses:
+        '200':
+          description: Championship standings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Standings'
+        '400':
+          description: Invalid year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/seasons/{year}/winners:
+    get:
+      summary: Get season winners summary
+      description: Returns championship winners and key statistics for the season
+      tags: [Seasons]
+      parameters:
+        - name: year
+          in: path
+          required: true
+          description: Season year
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Season winners
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonWinners'
+
+  /api/stats/head-to-head:
+    get:
+      summary: Compare two drivers head-to-head
+      description: Returns comparative statistics for two drivers
+      tags: [Analytics]
+      parameters:
+        - name: driver1
+          in: query
+          required: true
+          description: First driver ID
+          schema:
+            type: string
+        - name: driver2
+          in: query
+          required: true
+          description: Second driver ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Head-to-head comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeadToHead'
+        '400':
+          description: Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: One or both drivers not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/stats/fastest-laps/{year}:
+    get:
+      summary: Get fastest laps for a season
+      description: Returns drivers with most fastest laps in a season
+      tags: [Analytics]
+      parameters:
+        - name: year
+          in: path
+          required: true
+          description: Season year
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Maximum number of results
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Fastest laps ranking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FastestLaps'
+
+  /api/query:
+    post:
+      summary: Natural language query
+      description: |
+        Process a natural language query and return relevant F1 data.
+        
+        Uses keyword-first pattern matching (90%+ of queries, ~1-5ms response).
+        Falls back to optional LLM for complex queries if available.
+      tags: [Query]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: Natural language query
+                  example: "Who won the 2010 championship?"
+      responses:
+        '200':
+          description: Query result with data and interpretation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Invalid query format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Query processing unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    ApiInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "F1 Data API"
+        version:
+          type: string
+          example: "1.0.0"
+        description:
+          type: string
+        documentation:
+          type: string
+          example: "/docs"
+        endpoints:
+          type: object
+          additionalProperties:
+            type: string
+
+    Driver:
+      type: object
+      properties:
+        driverId:
+          type: string
+          example: "hamilton"
+        givenName:
+          type: string
+          example: "Lewis"
+        familyName:
+          type: string
+          example: "Hamilton"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1985-01-07"
+        nationality:
+          type: string
+          example: "British"
+        permanentNumber:
+          type: string
+          example: "44"
+        code:
+          type: string
+          example: "HAM"
+        url:
+          type: string
+          format: uri
+          example: "http://en.wikipedia.org/wiki/Lewis_Hamilton"
+
+    DriverList:
+      type: object
+      properties:
+        MRData:
+          type: object
+          properties:
+            DriverTable:
+              type: object
+              properties:
+                Drivers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Driver'
+
+    DriverStats:
+      type: object
+      properties:
+        driver:
+          $ref: '#/components/schemas/Driver'
+        statistics:
+          type: object
+          properties:
+            totalRaces:
+              type: integer
+              example: 300
+            wins:
+              type: integer
+              example: 103
+            podiums:
+              type: integer
+              example: 192
+            polePositions:
+              type: integer
+              example: 104
+            fastestLaps:
+              type: integer
+              example: 61
+            championships:
+              type: integer
+              example: 7
+            yearsActive:
+              type: object
+              properties:
+                first:
+                  type: integer
+                  example: 2007
+                last:
+                  type: integer
+                  example: 2024
+
+    Constructor:
+      type: object
+      properties:
+        constructorId:
+          type: string
+          example: "mclaren"
+        name:
+          type: string
+          example: "McLaren"
+        nationality:
+          type: string
+          example: "British"
+        url:
+          type: string
+          format: uri
+          example: "http://en.wikipedia.org/wiki/McLaren"
+
+    ConstructorList:
+      type: object
+      properties:
+        MRData:
+          type: object
+          properties:
+            ConstructorTable:
+              type: object
+              properties:
+                Constructors:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Constructor'
+
+    ConstructorStats:
+      type: object
+      properties:
+        constructor:
+          $ref: '#/components/schemas/Constructor'
+        statistics:
+          type: object
+          properties:
+            totalRaces:
+              type: integer
+            wins:
+              type: integer
+            podiums:
+              type: integer
+            polePositions:
+              type: integer
+            championships:
+              type: integer
+            yearsActive:
+              type: object
+              properties:
+                first:
+                  type: integer
+                last:
+                  type: integer
+
+    Season:
+      type: object
+      properties:
+        MRData:
+          type: object
+          properties:
+            RaceTable:
+              type: object
+              properties:
+                season:
+                  type: string
+                  example: "2023"
+                Races:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Race'
+
+    Race:
+      type: object
+      properties:
+        season:
+          type: string
+          example: "2023"
+        round:
+          type: string
+          example: "1"
+        raceName:
+          type: string
+          example: "Bahrain Grand Prix"
+        Circuit:
+          $ref: '#/components/schemas/Circuit'
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          format: time
+        Results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceResult'
+
+    Circuit:
+      type: object
+      properties:
+        circuitId:
+          type: string
+          example: "bahrain"
+        circuitName:
+          type: string
+          example: "Bahrain International Circuit"
+        Location:
+          type: object
+          properties:
+            locality:
+              type: string
+              example: "Sakhir"
+            country:
+              type: string
+              example: "Bahrain"
+            lat:
+              type: string
+              example: "26.0325"
+            long:
+              type: string
+              example: "50.5106"
+
+    RaceResult:
+      type: object
+      properties:
+        position:
+          type: string
+          example: "1"
+        positionText:
+          type: string
+          example: "1"
+        points:
+          type: string
+          example: "25"
+        Driver:
+          $ref: '#/components/schemas/Driver'
+        Constructor:
+          $ref: '#/components/schemas/Constructor'
+        grid:
+          type: string
+          example: "1"
+        laps:
+          type: string
+          example: "57"
+        status:
+          type: string
+          example: "Finished"
+        Time:
+          type: object
+          properties:
+            time:
+              type: string
+              example: "1:32:14.719"
+        FastestLap:
+          type: object
+          properties:
+            lap:
+              type: string
+            Time:
+              type: object
+              properties:
+                time:
+                  type: string
+            AverageSpeed:
+              type: object
+              properties:
+                speed:
+                  type: string
+
+    Standings:
+      type: object
+      properties:
+        driverStandings:
+          type: array
+          items:
+            type: object
+            properties:
+              position:
+                type: string
+              points:
+                type: string
+              wins:
+                type: string
+              Driver:
+                $ref: '#/components/schemas/Driver'
+        constructorStandings:
+          type: array
+          items:
+            type: object
+            properties:
+              position:
+                type: string
+              points:
+                type: string
+              wins:
+                type: string
+              Constructor:
+                $ref: '#/components/schemas/Constructor'
+
+    SeasonWinners:
+      type: object
+      properties:
+        year:
+          type: integer
+        driverChampion:
+          $ref: '#/components/schemas/Driver'
+        constructorChampion:
+          $ref: '#/components/schemas/Constructor'
+        totalRaces:
+          type: integer
+
+    HeadToHead:
+      type: object
+      properties:
+        driver1:
+          $ref: '#/components/schemas/DriverStats'
+        driver2:
+          $ref: '#/components/schemas/DriverStats'
+        comparison:
+          type: object
+          properties:
+            commonSeasons:
+              type: array
+              items:
+                type: integer
+            directComparison:
+              type: object
+              additionalProperties: true
+
+    FastestLaps:
+      type: object
+      properties:
+        year:
+          type: integer
+        rankings:
+          type: array
+          items:
+            type: object
+            properties:
+              driver:
+                $ref: '#/components/schemas/Driver'
+              fastestLapsCount:
+                type: integer
+
+    QueryResponse:
+      type: object
+      properties:
+        query:
+          type: string
+          description: Original query text
+        interpretation:
+          type: string
+          description: How the query was understood
+        data:
+          type: object
+          description: Query result data
+          additionalProperties: true
+        source:
+          type: string
+          description: Processing method used
+          enum: [keyword_parser, llm_ollama, llm_azure]
+          example: "keyword_parser"
+        processingTime:
+          type: number
+          description: Processing time in milliseconds
+          example: 3.42
+
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Driver 'unknown' not found"
+        suggestions:
+          type: array
+          items:
+            type: string
+          description: Helpful suggestions (when applicable)
+          example: ["hamilton", "hakkinen", "hulkenberg"]
