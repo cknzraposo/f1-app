@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constructor Details - F1 Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        /* Dark theme overrides */
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            padding-top: 80px;
+        }
+        
+        .bg-white {
+            background: #1a1a1a !important;
+            border: 1px solid #333 !important;
+        }
+        
+        .bg-gray-50, .bg-blue-50, .bg-red-50 {
+            background: #1a1a1a !important;
+        }
+        
+        .text-gray-900, .text-gray-800, .text-gray-700 {
+            color: #ffffff !important;
+        }
+        
+        .text-gray-600 {
+            color: #aaaaaa !important;
+        }
+        
+        .border-gray-200, .border-gray-300 {
+            border-color: #444 !important;
+        }
+        
+        .shadow-md, .shadow-lg {
+            box-shadow: 0 2px 8px rgba(225, 6, 0, 0.1) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">F1 Stats</a>
+        <nav class="nav-links">
+            <a href="/static/drivers-list.html">Drivers</a>
+            <a href="/static/constructors-list.html" class="active">Teams</a>
+            <a href="/static/results.html">Seasons</a>
+            <a href="/static/compare.html">Compare</a>
+            <a href="/docs" target="_blank" class="api-link">API</a>
+        </nav>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="container mx-auto px-4 py-12">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto"></div>
+            <p class="mt-4 text-gray-600">Loading constructor details...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden container mx-auto px-4 py-12">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600 font-medium">Failed to load constructor details</p>
+            <p id="error-message" class="text-gray-600 mt-2"></p>
+            <a href="constructors-list.html" class="mt-4 inline-block text-red-600 hover:underline">
+                ← Return to constructor list
+            </a>
+        </div>
+    </div>
+
+    <!-- Constructor Details -->
+    <div id="constructor-details" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h1 id="constructor-name" class="text-4xl font-bold text-gray-900"></h1>
+                        <p id="constructor-nationality" class="text-xl text-gray-600 mt-2"></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Statistics Cards -->
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Career Statistics</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Championships -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-championships">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Championships</div>
+                </div>
+
+                <!-- Wins -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-wins">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Wins</div>
+                </div>
+
+                <!-- Podiums -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-podiums">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Podiums</div>
+                </div>
+
+                <!-- Pole Positions -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-poles">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Pole Positions</div>
+                </div>
+
+                <!-- Fastest Laps -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-fastest-laps">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Fastest Laps</div>
+                </div>
+
+                <!-- Total Points -->
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600" id="stat-points">-</div>
+                    <div class="text-sm text-gray-600 mt-2">Total Points</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Career Overview -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Team Information -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Team Information</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Races:</span>
+                            <span id="info-races" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Active Seasons:</span>
+                            <span id="info-seasons" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">First Race:</span>
+                            <span id="info-first-race" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Last Race:</span>
+                            <span id="info-last-race" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Best Championship Position:</span>
+                            <span id="info-best-position" class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drivers -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Drivers</h3>
+                    <div id="drivers-list" class="max-h-64 overflow-y-auto">
+                        <p class="text-gray-600">Loading drivers...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wikipedia Link -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Learn More</h3>
+                <a id="wikipedia-link" href="#" target="_blank" class="text-red-600 hover:underline">
+                    View on Wikipedia →
+                </a>
+            </div>
+        </div>
+        <!-- Season by Season -->
+        <div class=\"container mx-auto px-4 py-8\">
+            <div class=\"bg-white rounded-lg shadow-md p-6\">
+                <h3 class=\"text-xl font-bold text-gray-900 mb-4\">Season by Season History</h3>
+                <div id=\"season-history\" class=\"overflow-x-auto\">
+                    <p class=\"text-gray-600\">Loading season history...</p>
+                </div>
+            </div>
+        </div>    </div>
+
+    <script type="module" src="/static/js/pages/constructor-profile.js"></script>
+</body>
+</html>

@@ -18,16 +18,33 @@ def fetch_all_drivers() -> Dict[str, Any]:
     total = int(data.get("MRData", {}).get("total", 0))
     print(f"Total drivers to fetch: {total}")
     
-    # Fetch all drivers in one request with the total as limit
-    url = f"{BASE_URL}/drivers.json?limit={total}"
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
+    # Fetch all drivers with pagination
+    all_drivers = []
+    limit = 100
+    offset = 0
     
-    all_data = response.json()
-    fetched_count = len(all_data.get("MRData", {}).get("DriverTable", {}).get("Drivers", []))
-    print(f"Successfully fetched {fetched_count} drivers")
+    while offset < total:
+        url = f"{BASE_URL}/drivers.json?limit={limit}&offset={offset}"
+        print(f"Fetching drivers {offset} to {offset + limit}...")
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        
+        page_data = response.json()
+        drivers = page_data.get("MRData", {}).get("DriverTable", {}).get("Drivers", [])
+        all_drivers.extend(drivers)
+        offset += limit
     
-    return all_data
+    print(f"Successfully fetched {len(all_drivers)} drivers")
+    
+    # Return in Ergast format
+    return {
+        "MRData": {
+            "DriverTable": {
+                "Drivers": all_drivers
+            },
+            "total": str(len(all_drivers))
+        }
+    }
 
 def save_drivers(data: Dict[str, Any], folder: str = "f1drivers"):
     """Save driver list into f1drivers/drivers.json."""

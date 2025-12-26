@@ -1,0 +1,87 @@
+Fetching complete F1 historical results from Ergast API...
+This will fetch all races from 1950 to present year-by-year.
+
+📡 [1/75] Fetching 1950 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [2/75] Fetching 1951 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [3/75] Fetching 1952 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [4/75] Fetching 1953 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [5/75] Fetching 1954 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [6/75] Fetching 1955 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [7/75] Fetching 1956 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [8/75] Fetching 1957 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [9/75] Fetching 1958 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [10/75] Fetching 1959 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [11/75] Fetching 1960 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [12/75] Fetching 1961 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [13/75] Fetching 1962 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [14/75] Fetching 1963 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [15/75] Fetching 1964 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [16/75] Fetching 1965 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [17/75] Fetching 1966 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [18/75] Fetching 1967 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [19/75] Fetching 1968 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [20/75] Fetching 1969 results (offset=0)... 7 races ✓ Total: 7 races, 100 driver results
+📡 [21/75] Fetching 1970 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [22/75] Fetching 1971 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [23/75] Fetching 1972 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [24/75] Fetching 1973 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [25/75] Fetching 1974 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [26/75] Fetching 1975 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [27/75] Fetching 1976 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [28/75] Fetching 1977 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [29/75] Fetching 1978 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [30/75] Fetching 1979 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [31/75] Fetching 1980 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [32/75] Fetching 1981 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [33/75] Fetching 1982 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [34/75] Fetching 1983 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [35/75] Fetching 1984 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [36/75] Fetching 1985 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [37/75] Fetching 1986 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [38/75] Fetching 1987 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [39/75] Fetching 1988 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [40/75] Fetching 1989 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [41/75] Fetching 1990 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [42/75] Fetching 1991 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [43/75] Fetching 1992 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [44/75] Fetching 1993 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [45/75] Fetching 1994 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [46/75] Fetching 1995 results (offset=0)... 4 races ✓ Total: 4 races, 100 driver results
+📡 [47/75] Fetching 1996 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [48/75] Fetching 1997 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [49/75] Fetching 1998 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [50/75] Fetching 1999 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [51/75] Fetching 2000 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [52/75] Fetching 2001 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [53/75] Fetching 2002 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [54/75] Fetching 2003 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [55/75] Fetching 2004 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [56/75] Fetching 2005 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [57/75] Fetching 2006 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [58/75] Fetching 2007 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [59/75] Fetching 2008 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [60/75] Fetching 2009 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [61/75] Fetching 2010 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [62/75] Fetching 2011 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [63/75] Fetching 2012 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [64/75] Fetching 2013 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [65/75] Fetching 2014 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [66/75] Fetching 2015 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+📡 [67/75] Fetching 2016 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [68/75] Fetching 2017 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [69/75] Fetching 2018 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [70/75] Fetching 2019 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [71/75] Fetching 2020 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [72/75] Fetching 2021 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [73/75] Fetching 2022 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [74/75] Fetching 2023 results (offset=0)... 5 races ✓ Total: 5 races, 100 driver results
+📡 [75/75] Fetching 2024 results (offset=0)... 6 races ✓ Total: 6 races, 100 driver results
+
+💾 Saving complete dataset...
+
+✅ Successfully saved complete F1 historical dataset!
+📊 Total races: 370
+📊 Total individual driver results: 7500
+📊 Year range: 1950-2024 (75 seasons)
+📊 File: f1resultsall/all_results.json
+📊 File size: 6.95 MB

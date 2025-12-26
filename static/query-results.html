@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - F1 Stats</title>
+    <link rel="stylesheet" href="/static/global.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">🏎️ F1 Stats</a>
+        <nav class="nav-links">
+            <a href="/static/drivers-list.html">Drivers</a>
+            <a href="/static/constructors-list.html">Teams</a>
+            <a href="/static/results.html">Seasons</a>
+            <a href="/static/compare.html">Compare</a>
+            <a href="/docs" target="_blank" class="api-link">API</a>
+        </nav>
+    </div>
+
+    <!-- Results Container -->
+    <div class="container">
+        <div class="back-link">
+            <a href="/">← Back to Search</a>
+        </div>
+        
+        <div class="results-page">
+            <h1>Search Results</h1>
+            <div class="query-display-container">
+                <span class="query-label">Query:</span>
+                <span id="queryDisplay" class="query-text"></span>
+            </div>
+            
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <style>
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .back-link {
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-link a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link a:hover {
+            color: #93c5fd;
+        }
+        
+        .results-page h1 {
+            color: #e10600;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .query-display-container {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #e10600;
+        }
+        
+        .query-label {
+            color: #9ca3af;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .query-text {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+        }
+        
+        #resultsContent {
+            min-height: 200px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #d1d5db;
+        }
+        
+        .results-count {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            background: rgba(0,0,0,0.3);
+            color: #d1d5db;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        table th.text-center {
+            text-align: center;
+        }
+        
+        table th.text-right {
+            text-align: right;
+        }
+        
+        table td {
+            padding: 0.875rem 1rem;
+            color: #e0e0e0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        table td.text-center {
+            text-align: center;
+        }
+        
+        table td.text-right {
+            text-align: right;
+        }
+        
+        table td.highlight {
+            font-weight: 600;
+            color: #60a5fa;
+        }
+        
+        table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        
+        /* Podium highlighting */
+        .podium-1 {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%) !important;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.1) 0%, transparent 100%) !important;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.1) 0%, transparent 100%) !important;
+        }
+        
+        /* Loading spinner animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script type="module" src="/static/js/pages/results.js"></script>
+</body>
+</html>

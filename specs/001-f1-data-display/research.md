@@ -165,6 +165,18 @@ static/
 - Direct passthrough from JSON files to API response
 - Consistent with existing implementation
 
+**Main API source for creating JSON files**
+
+- Drivers - https://api.jolpi.ca/ergast/f1/drivers/ (See: f1_drivers.py, fetch_drivers.py)
+- Constructors - https://api.jolpi.ca/ergast/f1/constructors/ (See: f1_constructors.py, fetch_constrictors.py)
+- Results - https://api.jolpi.ca/ergast/f1/results/ (See: f1_results.py, fetch_season.py)
+- Race List - https://api.jolpi.ca/ergast/f1/
+- API ROOT - https://api.jolpi.ca/ergast/
+
+Use the above to generate and store the .json file data in the root, the .json files are stored in a directory of it's own. The .json files are used by the F1 App's API.
+
+
+
 **Alternatives Considered**:
 - **Custom JSON schema**: Rejected - breaks compatibility, adds transformation complexity
 - **GraphQL**: Rejected - requires schema layer, query parsing, resolver complexity

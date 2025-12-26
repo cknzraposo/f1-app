@@ -38,18 +38,18 @@ class QueryParser:
                 drivers = data.get("MRData", {}).get("DriverTable", {}).get("Drivers", [])
                 
                 # Create mapping of surname (lowercase) -> driverId
+                # Priority: surname mapping only, given names excluded to avoid conflicts
                 driver_map = {}
                 for driver in drivers:
                     surname = driver.get("familyName", "").lower()
-                    given_name = driver.get("givenName", "").lower()
                     driver_id = driver.get("driverId", "")
                     
+                    # Map surname to driver ID (prefer existing to avoid overwriting)
                     if surname and driver_id:
-                        driver_map[surname] = driver_id
-                    if given_name and driver_id:
-                        driver_map[given_name] = driver_id
+                        if surname not in driver_map:
+                            driver_map[surname] = driver_id
                 
-                print(f"Loaded {len(driver_map)} driver name variations")
+                print(f"Loaded {len(driver_map)} driver surnames")
                 return driver_map
         except Exception as e:
             print(f"Warning: Could not load driver database: {e}")
@@ -154,18 +154,30 @@ class QueryParser:
             text_lower = text_lower.replace(word, ' ')
         
         # Strategy 1: Check for full name match (e.g., "lewis hamilton")
+        # This has highest priority to disambiguate common surnames
         for fullname, driver_id in self.driver_fullnames.items():
             if fullname in text_lower:
                 return driver_id
         
-        # Strategy 2: Exact match against known driver names
+        # Strategy 2: Exact match against known driver surnames
+        # Now we prioritize modern drivers by checking driverId format
         words = text_lower.split()
         for word in words:
             cleaned = re.sub(r'[^\w]', '', word)
             if cleaned in self.known_drivers and len(cleaned) > 2:
-                return self.known_drivers[cleaned]
+                driver_id = self.known_drivers[cleaned]
+                # Prefer drivers with underscores (modern format: "lewis_hamilton")
+                # over old format (single names like "abate")
+                if '_' in driver_id:
+                    return driver_id
+                # Store as fallback but keep looking
+                fallback_driver = driver_id
         
-        # Strategy 3: Fuzzy match against all known driver names
+        # Return fallback driver if we found one
+        if 'fallback_driver' in locals():
+            return fallback_driver
+        
+        # Strategy 3: Fuzzy match against all known driver surnames
         for word in words:
             cleaned = re.sub(r'[^\w]', '', word)
             if len(cleaned) > 3:  # Only fuzzy match words with 4+ chars

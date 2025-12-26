@@ -3,7 +3,7 @@ import os
 import json
 from typing import Dict, Any, List
 
-BASE_URL = "https://api.jolpi.ca/ergast/f1"
+BASE_URL = "https://api.jolpi.ca/ergast/f1/results"
 DEFAULT_LIMIT = 100  # Ergast supports pagination, bigger limit reduces calls
 
 def _get(url: str, params: Dict[str, Any], timeout: int = 20, max_retries: int = 3) -> Dict[str, Any]:

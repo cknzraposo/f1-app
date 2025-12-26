@@ -8,6 +8,34 @@ from ..json_loader import load_season_results, get_available_seasons
 
 router = APIRouter(prefix="/api/seasons", tags=["Seasons"])
 
+# Constants for year validation
+MIN_YEAR = 1984
+MAX_YEAR = 2024
+
+
+def validate_year(year: int) -> None:
+    """
+    Validate that year is within available range.
+    
+    Args:
+        year: Season year to validate
+        
+    Raises:
+        HTTPException: If year is outside valid range
+    """
+    available_seasons = get_available_seasons()
+    if not available_seasons:
+        raise HTTPException(status_code=500, detail="No season data available")
+    
+    min_year = min(available_seasons)
+    max_year = max(available_seasons)
+    
+    if year < min_year or year > max_year:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Season {year} not available. Available years: {min_year}-{max_year}"
+        )
+
 
 @router.get("")
 def get_seasons() -> Dict[str, Any]:
@@ -31,11 +59,20 @@ def get_season(year: int) -> Dict[str, Any]:
     
     Args:
         year: Season year (e.g., 2024)
+        
+    Raises:
+        HTTPException 404: If season data not found with available year range
     """
+    validate_year(year)
+    
     try:
         return load_season_results(year)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Season {year} data not found")
+        available_seasons = get_available_seasons()
+        raise HTTPException(
+            status_code=404,
+            detail=f"Season {year} data not found. Available years: {min(available_seasons)}-{max(available_seasons)}"
+        )
 
 
 @router.get("/{year}/races/{round}")
@@ -72,7 +109,11 @@ def get_season_standings(year: int) -> Dict[str, Any]:
     
     Args:
         year: Season year
+        
+    Raises:
+        HTTPException 404: If season data not found
     """
+    validate_year(year)
     try:
         season_data = load_season_results(year)
     except FileNotFoundError:
@@ -171,12 +212,15 @@ def get_season_standings(year: int) -> Dict[str, Any]:
 
 @router.get("/{year}/winners")
 def get_season_winners(year: int) -> Dict[str, Any]:
-    """
-    Get list of race winners for a season.
+    """Get list of race winners for a season.
     
     Args:
         year: Season year
+        
+    Raises:
+        HTTPException 404: If season data not found or year not available
     """
+    validate_year(year)
     try:
         season_data = load_season_results(year)
     except FileNotFoundError:

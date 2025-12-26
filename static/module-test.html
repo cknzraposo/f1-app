@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Import Test - F1 App</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1419;
+            color: #e0e0e0;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #e10600;
+            border-bottom: 2px solid rgba(225, 6, 0, 0.3);
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-section h2 {
+            color: #60a5fa;
+            margin-top: 0;
+        }
+        .success {
+            color: #4ade80;
+        }
+        .error {
+            color: #ef4444;
+        }
+        .module-list {
+            list-style: none;
+            padding: 0;
+        }
+        .module-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .module-list li:last-child {
+            border-bottom: none;
+        }
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>F1 App - Module Import Test</h1>
+    <p>Testing Phase 1 refactoring: Core and component modules</p>
+
+    <div id="results"></div>
+
+    <script type="module">
+        const results = document.getElementById('results');
+        const tests = [];
+
+        // Test function
+        async function testImport(modulePath, exportNames) {
+            try {
+                const module = await import(modulePath);
+                const missingExports = [];
+                
+                for (const exportName of exportNames) {
+                    if (!(exportName in module)) {
+                        missingExports.push(exportName);
+                    }
+                }
+                
+                if (missingExports.length > 0) {
+                    return {
+                        success: false,
+                        module: modulePath,
+                        error: `Missing exports: ${missingExports.join(', ')}`
+                    };
+                }
+                
+                return {
+                    success: true,
+                    module: modulePath,
+                    exports: exportNames.length
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    module: modulePath,
+                    error: error.message
+                };
+            }
+        }
+
+        // Run all tests
+        async function runTests() {
+            results.innerHTML = '<p>Running tests...</p>';
+            
+            // Core modules
+            tests.push(await testImport('./js/core/api-client.js', [
+                'getDrivers', 'getDriver', 'getDriverStats',
+                'getConstructors', 'getConstructor', 'getConstructorStats',
+                'getSeasonResults', 'getSeasonStandings', 'getSeasonWinners',
+                'executeQuery', 'getHeadToHead', 'clearCache', 'prefetchCommonData'
+            ]));
+            
+            tests.push(await testImport('./js/core/state-manager.js', [
+                'getAllDrivers', 'setAllDrivers', 'getAllConstructors', 'setAllConstructors',
+                'getCurrentPage', 'setCurrentPage', 'getPageSize', 'setPageSize',
+                'getCurrentData', 'setCurrentData', 'getCurrentDataType', 'setCurrentDataType',
+                'getQueryHistory', 'addToQueryHistory', 'clearQueryHistory'
+            ]));
+            
+            // Component modules
+            tests.push(await testImport('./js/components/autocomplete.js', [
+                'initAutocomplete', 'hideAutocomplete', 'selectAutocompleteItem'
+            ]));
+            
+            tests.push(await testImport('./js/components/query-history.js', [
+                'loadQueryHistory', 'saveQueryToHistory', 'clearQueryHistory',
+                'showQueryHistory', 'hideQueryHistory', 'initQueryHistory'
+            ]));
+            
+            tests.push(await testImport('./js/components/suggestions.js', [
+                'generateSuggestions', 'showSmartSuggestions', 'hideSuggestions',
+                'initSuggestions', 'getPopularSuggestions'
+            ]));
+            
+            tests.push(await testImport('./js/components/table-renderer.js', [
+                'TABLE_CONFIGS', 'renderResults', 'getTableConfig', 'hasTableConfig'
+            ]));
+            
+            // Utility modules
+            tests.push(await testImport('./js/utils/formatters.js', [
+                'getNestedValue', 'isDriverColumn', 'getDriverId', 'createDriverLink',
+                'formatDate', 'formatTime', 'formatNumber', 'formatPoints',
+                'escapeHtml', 'truncateText', 'getPodiumClass'
+            ]));
+            
+            tests.push(await testImport('./js/utils/dom-helpers.js', [
+                'showLoading', 'showError', 'showEmpty', 'clearElement',
+                'createElementFromHTML', 'toggleClass', 'setVisibility',
+                'getElementById', 'querySelectorAll', 'addListener', 'debounce', 'throttle'
+            ]));
+            
+            tests.push(await testImport('./js/utils/pagination.js', [
+                'calculatePagination', 'paginateData', 'renderPaginationControls',
+                'changePage', 'changePageSize', 'nextPage', 'previousPage', 'firstPage', 'lastPage'
+            ]));
+            
+            // Display results
+            displayResults();
+        }
+
+        function displayResults() {
+            const passed = tests.filter(t => t.success).length;
+            const failed = tests.filter(t => !t.success).length;
+            
+            let html = `
+                <div class="test-section">
+                    <h2>Test Summary</h2>
+                    <p>Total modules: ${tests.length}</p>
+                    <p class="success">✓ Passed: ${passed}</p>
+                    <p class="error">✗ Failed: ${failed}</p>
+                </div>
+            `;
+            
+            // Group by category
+            const categories = {
+                'Core Modules': tests.filter(t => t.module.includes('/core/')),
+                'Component Modules': tests.filter(t => t.module.includes('/components/')),
+                'Utility Modules': tests.filter(t => t.module.includes('/utils/'))
+            };
+            
+            for (const [category, categoryTests] of Object.entries(categories)) {
+                html += `
+                    <div class="test-section">
+                        <h2>${category}</h2>
+                        <ul class="module-list">
+                `;
+                
+                for (const test of categoryTests) {
+                    const icon = test.success ? '✓' : '✗';
+                    const className = test.success ? 'success' : 'error';
+                    const moduleName = test.module.split('/').pop();
+                    
+                    html += `
+                        <li class="${className}">
+                            ${icon} <code>${moduleName}</code>
+                            ${test.success 
+                                ? `(${test.exports} exports)` 
+                                : `<br><small>${test.error}</small>`
+                            }
+                        </li>
+                    `;
+                }
+                
+                html += `
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (failed === 0) {
+                html += `
+                    <div class="test-section" style="background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.3);">
+                        <h2 class="success">✓ All Tests Passed!</h2>
+                        <p>All modules are properly structured and exportable.</p>
+                        <p>Phase 1 refactoring complete. Ready for Phase 2.</p>
+                    </div>
+                `;
+            }
+            
+            results.innerHTML = html;
+        }
+
+        // Run tests on load
+        runTests().catch(error => {
+            results.innerHTML = `
+                <div class="test-section error">
+                    <h2>Test Runner Error</h2>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -20,11 +20,11 @@
 
 **Purpose**: Validate existing implementation and ensure development environment is ready
 
-- [ ] T001 Verify Python 3.12+ installed and virtual environment configured
-- [ ] T002 Validate all dependencies in requirements.txt are installed correctly
-- [ ] T003 [P] Verify data files exist: f1data/*.json, f1drivers/drivers.json, f1constructors/constructors.json
-- [ ] T004 [P] Run existing tests with `pytest tests/` to establish baseline
-- [ ] T005 Start server with `uvicorn app.api_server:app --reload` and verify http://localhost:8000 loads
+- [X] T001 Verify Python 3.12+ installed and virtual environment configured
+- [X] T002 Validate all dependencies in requirements.txt are installed correctly
+- [X] T003 [P] Verify data files exist: f1data/*.json, f1drivers/drivers.json, f1constructors/constructors.json
+- [X] T004 [P] Run existing tests with `pytest tests/` to establish baseline
+- [X] T005 Start server with `uvicorn app.api_server:app --reload` and verify http://localhost:8000 loads
 
 **Checkpoint**: Development environment ready - all existing code functional
 
@@ -36,11 +36,11 @@
 
 **⚠️ CRITICAL**: These enhancements must be complete before user story validation begins
 
-- [ ] T006 [P] Add input validation helpers in app/services/validation.py for year range (1984-2024), driver IDs, constructor IDs
-- [ ] T007 [P] Enhance error responses in app/routers/*.py to include helpful suggestions using difflib.get_close_matches
-- [ ] T008 Add comprehensive logging to app/json_loader.py for cache hits/misses and file load times
-- [ ] T009 [P] Create test fixtures in tests/conftest.py for driver data, constructor data, and season data
-- [ ] T010 Document existing LRU cache configuration in app/json_loader.py with performance metrics
+- [X] T006 [P] Add input validation helpers in app/services/validation.py for year range (1984-2024), driver IDs, constructor IDs
+- [X] T007 [P] Enhance error responses in app/routers/*.py to include helpful suggestions using difflib.get_close_matches
+- [X] T008 Add comprehensive logging to app/json_loader.py for cache hits/misses and file load times
+- [X] T009 [P] Create test fixtures in tests/conftest.py for driver data, constructor data, and season data
+- [X] T010 Document existing LRU cache configuration in app/json_loader.py with performance metrics
 
 **Checkpoint**: Infrastructure enhanced - ready for user story validation and testing
 
@@ -54,24 +54,24 @@
 
 ### Validation for User Story 1
 
-- [ ] T011 [P] [US1] Verify `/api/drivers` endpoint returns complete driver list from app/routers/drivers.py
-- [ ] T012 [P] [US1] Verify `/api/drivers/{driver_id}` endpoint returns driver biographical data correctly
-- [ ] T013 [US1] Validate driver statistics computation in app/services/f1_service.py (wins, podiums, poles, fastest laps)
-- [ ] T014 [P] [US1] Test `/api/drivers/{driver_id}/stats` endpoint computes career totals correctly
-- [ ] T015 [US1] Verify driver data caching with @lru_cache(maxsize=1) in app/json_loader.py performs as expected
+- [X] T011 [P] [US1] Verify `/api/drivers` endpoint returns complete driver list from app/routers/drivers.py
+- [X] T012 [P] [US1] Verify `/api/drivers/{driver_id}` endpoint returns driver biographical data correctly
+- [X] T013 [US1] Validate driver statistics computation in app/services/f1_service.py (wins, podiums, poles, fastest laps)
+- [X] T014 [P] [US1] Test `/api/drivers/{driver_id}/stats` endpoint computes career totals correctly
+- [X] T015 [US1] Verify driver data caching with @lru_cache(maxsize=1) in app/json_loader.py performs as expected
 
 ### Testing for User Story 1
 
-- [ ] T016 [P] [US1] Create contract tests for driver endpoints in tests/contract/test_drivers.py
-- [ ] T017 [P] [US1] Create integration tests for driver data flow in tests/integration/test_driver_flow.py
-- [ ] T018 [P] [US1] Create unit tests for driver statistics computation in tests/unit/test_driver_stats.py
+- [X] T016 [P] [US1] Create contract tests for driver endpoints in tests/contract/test_drivers.py
+- [X] T017 [P] [US1] Create integration tests for driver data flow in tests/integration/test_driver_flow.py
+- [X] T018 [P] [US1] Create unit tests for driver statistics computation in tests/unit/test_driver_stats.py
 
 ### Enhancement for User Story 1
 
-- [ ] T019 [US1] Enhance static/drivers.html to display driver statistics cards with responsive layout
-- [ ] T020 [US1] Add driver search/filter functionality in static/drivers.html using JavaScript
-- [ ] T021 [US1] Implement driver profile detail view with season-by-season breakdown in static/drivers.html
-- [ ] T022 [P] [US1] Add error handling for driver not found with suggestions in app/routers/drivers.py
+- [X] T019 [US1] Enhance static/drivers.html to display driver statistics cards with responsive layout
+- [X] T020 [US1] Add driver search/filter functionality in static/drivers.html using JavaScript
+- [X] T021 [US1] Implement driver profile detail view with season-by-season breakdown in static/drivers.html
+- [X] T022 [P] [US1] Add error handling for driver not found with suggestions in app/routers/drivers.py
 
 **Checkpoint**: User Story 1 complete - driver information fully accessible and tested
 
@@ -116,26 +116,26 @@
 
 ### Validation for User Story 3
 
-- [ ] T035 [P] [US3] Verify `/api/seasons` endpoint returns available years (1984-2024) from app/routers/seasons.py
-- [ ] T036 [P] [US3] Verify `/api/seasons/{year}` endpoint returns complete race results for a season
-- [ ] T037 [US3] Test `/api/seasons/{year}/standings` endpoint returns driver and constructor championship tables
-- [ ] T038 [P] [US3] Test `/api/seasons/{year}/winners` endpoint returns season champions correctly
-- [ ] T039 [US3] Verify season data caching with @lru_cache(maxsize=5) evicts old seasons correctly
-- [ ] T040 [P] [US3] Validate year range validation (1984-2024) in app/routers/seasons.py
+- [X] T035 [P] [US3] Verify `/api/seasons` endpoint returns available years (1984-2024) from app/routers/seasons.py
+- [X] T036 [P] [US3] Verify `/api/seasons/{year}` endpoint returns complete race results for a season
+- [X] T037 [US3] Test `/api/seasons/{year}/standings` endpoint returns driver and constructor championship tables
+- [X] T038 [P] [US3] Test `/api/seasons/{year}/winners` endpoint returns season champions correctly
+- [X] T039 [US3] Verify season data caching with @lru_cache(maxsize=5) evicts old seasons correctly
+- [X] T040 [P] [US3] Validate year range validation (1984-2024) in app/routers/seasons.py
 
 ### Testing for User Story 3
 
-- [ ] T041 [P] [US3] Create contract tests for season endpoints in tests/contract/test_seasons.py
-- [ ] T042 [P] [US3] Create integration tests for season data flow in tests/integration/test_season_flow.py
-- [ ] T043 [P] [US3] Create unit tests for standings computation in tests/unit/test_season_stats.py
+- [X] T041 [P] [US3] Create contract tests for season endpoints in tests/contract/test_seasons.py
+- [X] T042 [P] [US3] Create integration tests for season data flow in tests/integration/test_season_flow.py
+- [X] T043 [P] [US3] Create unit tests for standings computation in tests/unit/test_season_stats.py
 
 ### Enhancement for User Story 3
 
-- [ ] T044 [US3] Enhance static/results.html to display season selector (1984-2024)
-- [ ] T045 [US3] Implement race-by-race results table in static/results.html with sortable columns
-- [ ] T046 [US3] Add championship standings tables (drivers and constructors) in static/results.html
-- [ ] T047 [US3] Create season summary view with champions and statistics in static/results.html
-- [ ] T048 [P] [US3] Add error handling for invalid year with range message in app/routers/seasons.py
+- [X] T044 [US3] Enhance static/results.html to display season selector (1984-2024)
+- [X] T045 [US3] Implement race-by-race results table in static/results.html with sortable columns
+- [X] T046 [US3] Add championship standings tables (drivers and constructors) in static/results.html
+- [X] T047 [US3] Create season summary view with champions and statistics in static/results.html
+- [X] T048 [P] [US3] Add error handling for invalid year with range message in app/routers/seasons.py
 
 **Checkpoint**: User Story 3 complete - season information fully accessible and tested
 
@@ -149,20 +149,20 @@
 
 ### Validation for User Story 4
 
-- [ ] T049 [P] [US4] Verify query parser extracts years correctly using regex in app/query_parser.py
-- [ ] T050 [P] [US4] Verify query parser extracts driver names with fuzzy matching in app/query_parser.py
-- [ ] T051 [P] [US4] Verify query parser extracts constructor names in app/query_parser.py
-- [ ] T052 [US4] Test championship query pattern matching in app/query_parser.py
-- [ ] T053 [P] [US4] Test driver statistics query pattern matching in app/query_parser.py
-- [ ] T054 [P] [US4] Test standings query pattern matching in app/query_parser.py
-- [ ] T055 [US4] Verify query processing flow in app/routers/query.py routes to correct endpoints
-- [ ] T056 [P] [US4] Test LLM fallback graceful degradation when services unavailable in app/llm_service.py
+- [X] T049 [P] [US4] Verify query parser extracts years correctly using regex in app/query_parser.py
+- [X] T050 [P] [US4] Verify query parser extracts driver names with fuzzy matching in app/query_parser.py
+- [X] T051 [P] [US4] Verify query parser extracts constructor names in app/query_parser.py
+- [X] T052 [US4] Test championship query pattern matching in app/query_parser.py
+- [X] T053 [P] [US4] Test driver statistics query pattern matching in app/query_parser.py
+- [X] T054 [P] [US4] Test standings query pattern matching in app/query_parser.py
+- [X] T055 [US4] Verify query processing flow in app/routers/query.py routes to correct endpoints
+- [X] T056 [P] [US4] Test LLM fallback graceful degradation when services unavailable in app/llm_service.py
 
 ### Testing for User Story 4
 
-- [ ] T057 [P] [US4] Create contract tests for query endpoint in tests/contract/test_query.py
-- [ ] T058 [P] [US4] Create integration tests for query patterns in tests/integration/test_query_parsing.py
-- [ ] T059 [P] [US4] Create unit tests for entity extraction in tests/unit/test_query_parser.py
+- [X] T057 [P] [US4] Create contract tests for query endpoint in tests/contract/test_query.py
+- [X] T058 [P] [US4] Create integration tests for query patterns in tests/integration/test_query_parsing.py
+- [X] T059 [P] [US4] Create unit tests for entity extraction in tests/unit/test_query_parser.py
 
 ### Enhancement for User Story 4
 
@@ -171,6 +171,12 @@
 - [ ] T062 [US4] Implement query history and autocomplete in static/index.html
 - [ ] T063 [US4] Add processing time and source indicator (keyword_parser/llm) in static/app.js
 - [ ] T064 [P] [US4] Add error handling for ambiguous queries with suggestions in app/routers/query.py
+- [X] **T064**: Enhanced error handling with query suggestions in `app/routers/query.py`
+  - Add `get_driver_suggestions()` using difflib for fuzzy matching
+  - Add `get_query_suggestions()` for context-aware example queries
+  - Provide "did you mean" suggestions for driver/constructor not found errors
+  - Return helpful example queries when parsing fails
+  - Test: Invalid queries return helpful suggestions
 
 **Checkpoint**: User Story 4 complete - natural language queries working with keyword-first approach
 
@@ -184,24 +190,24 @@
 
 ### Validation for User Story 5
 
-- [ ] T065 [P] [US5] Verify `/api/stats/head-to-head` endpoint in app/routers/analytics.py accepts multiple entities
-- [ ] T066 [US5] Test comparative statistics calculation in app/services/f1_service.py
-- [ ] T067 [P] [US5] Verify head-to-head record computation for overlapping seasons
-- [ ] T068 [P] [US5] Test `/api/stats/fastest-laps/{year}` endpoint for fastest lap rankings
+- [X] T065 [P] [US5] Verify `/api/stats/head-to-head` endpoint in app/routers/analytics.py accepts multiple entities
+- [X] T066 [US5] Test comparative statistics calculation in app/services/f1_service.py
+- [X] T067 [P] [US5] Verify head-to-head record computation for overlapping seasons
+- [X] T068 [P] [US5] Test `/api/stats/fastest-laps/{year}` endpoint for fastest lap rankings
 
 ### Testing for User Story 5
 
-- [ ] T069 [P] [US5] Create contract tests for analytics endpoints in tests/contract/test_analytics.py
-- [ ] T070 [P] [US5] Create integration tests for comparison flow in tests/integration/test_comparison.py
-- [ ] T071 [P] [US5] Create unit tests for comparison calculations in tests/unit/test_comparison_stats.py
+- [X] T069 [P] [US5] Create contract tests for analytics endpoints in tests/contract/test_analytics.py
+- [X] T070 [P] [US5] Create integration tests for comparison flow in tests/integration/test_comparison.py
+- [X] T071 [P] [US5] Create unit tests for comparison calculations in tests/unit/test_comparison_stats.py
 
 ### Implementation for User Story 5
 
-- [ ] T072 [US5] Create comparison interface in static/compare.html with entity selector
-- [ ] T073 [US5] Implement side-by-side statistics display in static/compare.html
-- [ ] T074 [US5] Add common season highlighting and head-to-head records in static/compare.html
-- [ ] T075 [US5] Create visualization for career trajectory comparison using Chart.js or similar (CDN)
-- [ ] T076 [P] [US5] Add comparison link from driver/constructor profile pages in static/drivers.html and static/constructors.html
+- [X] T072 [US5] Create comparison interface in static/compare.html with entity selector
+- [X] T073 [US5] Implement side-by-side statistics display in static/compare.html
+- [X] T074 [US5] Add common season highlighting and head-to-head records in static/compare.html
+- [X] T075 [US5] Create visualization for career trajectory comparison using Chart.js or similar (CDN)
+- [X] T076 [P] [US5] Add comparison link from driver/constructor profile pages in static/drivers.html and static/constructors.html
 
 **Checkpoint**: User Story 5 complete - comparison analytics fully functional
 

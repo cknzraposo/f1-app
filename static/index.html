@@ -11,8 +11,11 @@
     <div class="header">
         <a href="/" class="logo">F1 Stats</a>
         <nav class="nav-links">
-            <a href="/docs" target="_blank">API Docs</a>
-            <a href="/redoc" target="_blank">Reference</a>
+            <a href="/static/drivers-list.html">Drivers</a>
+            <a href="/static/constructors-list.html">Teams</a>
+            <a href="/static/results.html">Seasons</a>
+            <a href="/static/compare.html">Compare</a>
+            <a href="/docs" target="_blank" class="api-link">API</a>
         </nav>
     </div>
 
@@ -36,6 +39,8 @@
                     </svg>
                 </div>
                 <div id="autocomplete"></div>
+                <div id="suggestions" class="query-suggestions"></div>
+                <div id="queryHistory" class="query-history"></div>
             </div>
             
             <!-- Try These Queries -->
@@ -96,6 +101,6 @@
         </div>
     </div>
     
-    <script src="/static/app.js"></script>
+    <script type="module" src="/static/js/pages/index.js"></script>
 </body>
 </html>

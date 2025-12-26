@@ -5,9 +5,11 @@ Thin HTTP handlers that delegate to service layer for business logic.
 """
 from fastapi import APIRouter, HTTPException, Query
 from typing import Any, Dict, Optional
+from difflib import get_close_matches
 
 from ..json_loader import load_drivers, load_season_results, get_available_seasons
 from ..services import F1Service
+from ..services.validation import validate_driver_id, get_available_driver_ids
 
 router = APIRouter(prefix="/api/drivers", tags=["Drivers"])
 
@@ -69,6 +71,9 @@ def get_driver(driver_id: str) -> Dict[str, Any]:
     
     Args:
         driver_id: The driver's unique identifier (e.g., 'max_verstappen')
+        
+    Raises:
+        HTTPException 404: If driver not found, with suggestions for similar drivers
     """
     drivers_data = load_drivers()
     drivers_list = drivers_data.get("MRData", {}).get("DriverTable", {}).get("Drivers", [])
@@ -77,7 +82,15 @@ def get_driver(driver_id: str) -> Dict[str, Any]:
         if driver.get("driverId") == driver_id:
             return {"MRData": {"DriverTable": {"Drivers": [driver]}}}
     
-    raise HTTPException(status_code=404, detail=f"Driver '{driver_id}' not found")
+    # Driver not found - provide helpful suggestions
+    all_driver_ids = [d.get("driverId") for d in drivers_list if d.get("driverId")]
+    suggestions = get_close_matches(driver_id, all_driver_ids, n=5, cutoff=0.6)
+    
+    error_message = f"Driver '{driver_id}' not found."
+    if suggestions:
+        error_message += f" Did you mean: {', '.join(suggestions)}?"
+    
+    raise HTTPException(status_code=404, detail=error_message)
 
 
 @router.get("/{driver_id}/seasons/{year}")
@@ -88,11 +101,29 @@ def get_driver_season_results(driver_id: str, year: int) -> Dict[str, Any]:
     Args:
         driver_id: The driver's unique identifier
         year: Season year (e.g., 2024)
+        
+    Raises:
+        HTTPException 404: If season data not found or driver not recognized
     """
+    # Check if driver exists first
+    drivers_data = load_drivers()
+    drivers_list = drivers_data.get("MRData", {}).get("DriverTable", {}).get("Drivers", [])
+    driver_exists = any(d.get("driverId") == driver_id for d in drivers_list)
+    
+    if not driver_exists:
+        all_driver_ids = [d.get("driverId") for d in drivers_list if d.get("driverId")]
+        suggestions = get_close_matches(driver_id, all_driver_ids, n=3, cutoff=0.6)
+        error_message = f"Driver '{driver_id}' not found."
+        if suggestions:
+            error_message += f" Did you mean: {', '.join(suggestions)}?"
+        raise HTTPException(status_code=404, detail=error_message)
+    
     try:
         season_data = load_season_results(year)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Season {year} data not found")
+        available_years = get_available_seasons()
+        error_message = f"Season {year} data not found. Available years: {min(available_years)}-{max(available_years)}"
+        raise HTTPException(status_code=404, detail=error_message)
     
     # Filter results for specific driver
     races = season_data.get("MRData", {}).get("RaceTable", {}).get("Races", [])

@@ -5,6 +5,7 @@ Thin HTTP handlers that delegate to service layer for business logic.
 """
 from fastapi import APIRouter, HTTPException, Query
 from typing import Any, Dict, Optional
+from difflib import get_close_matches
 
 from ..json_loader import load_constructors, load_season_results, get_available_seasons
 from ..services import F1Service
@@ -28,6 +29,9 @@ def get_constructor(constructor_id: str) -> Dict[str, Any]:
     
     Args:
         constructor_id: The constructor's unique identifier (e.g., 'red_bull')
+        
+    Raises:
+        HTTPException 404: If constructor not found, with suggestions for similar constructors
     """
     constructors_data = load_constructors()
     constructors_list = constructors_data.get("MRData", {}).get("ConstructorTable", {}).get("Constructors", [])
@@ -36,7 +40,15 @@ def get_constructor(constructor_id: str) -> Dict[str, Any]:
         if constructor.get("constructorId") == constructor_id:
             return {"MRData": {"ConstructorTable": {"Constructors": [constructor]}}}
     
-    raise HTTPException(status_code=404, detail=f"Constructor '{constructor_id}' not found")
+    # Constructor not found - provide helpful suggestions
+    all_constructor_ids = [c.get("constructorId") for c in constructors_list if c.get("constructorId")]
+    suggestions = get_close_matches(constructor_id, all_constructor_ids, n=5, cutoff=0.6)
+    
+    error_message = f"Constructor '{constructor_id}' not found."
+    if suggestions:
+        error_message += f" Did you mean: {', '.join(suggestions)}?"
+    
+    raise HTTPException(status_code=404, detail=error_message)
 
 
 @router.get("/{constructor_id}/seasons/{year}")
@@ -47,11 +59,29 @@ def get_constructor_season_results(constructor_id: str, year: int) -> Dict[str, 
     Args:
         constructor_id: The constructor's unique identifier
         year: Season year (e.g., 2024)
+        
+    Raises:
+        HTTPException 404: If season data not found or constructor not recognized
     """
+    # Check if constructor exists first
+    constructors_data = load_constructors()
+    constructors_list = constructors_data.get("MRData", {}).get("ConstructorTable", {}).get("Constructors", [])
+    constructor_exists = any(c.get("constructorId") == constructor_id for c in constructors_list)
+    
+    if not constructor_exists:
+        all_constructor_ids = [c.get("constructorId") for c in constructors_list if c.get("constructorId")]
+        suggestions = get_close_matches(constructor_id, all_constructor_ids, n=3, cutoff=0.6)
+        error_message = f"Constructor '{constructor_id}' not found."
+        if suggestions:
+            error_message += f" Did you mean: {', '.join(suggestions)}?"
+        raise HTTPException(status_code=404, detail=error_message)
+    
     try:
         season_data = load_season_results(year)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Season {year} data not found")
+        available_years = get_available_seasons()
+        error_message = f"Season {year} data not found. Available years: {min(available_years)}-{max(available_years)}"
+        raise HTTPException(status_code=404, detail=error_message)
     
     races = season_data.get("MRData", {}).get("RaceTable", {}).get("Races", [])
     constructor_results = []

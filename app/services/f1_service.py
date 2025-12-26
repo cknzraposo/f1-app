@@ -5,6 +5,7 @@ Provides independently testable business logic for F1 data processing.
 All methods are static and have no HTTP dependencies, making them easy to test.
 """
 from typing import Dict, Any, Optional, List, Set
+from functools import lru_cache
 from ..json_loader import load_drivers, load_constructors, load_season_results, get_available_seasons
 
 
@@ -291,6 +292,7 @@ class F1Service:
         }
     
     @staticmethod
+    @lru_cache(maxsize=128)
     def get_constructor_statistics(
         constructor_id: str,
         start_year: Optional[int] = None,
@@ -334,15 +336,18 @@ class F1Service:
         stats = {
             "constructorId": constructor_id,
             "totalRaces": 0,
-            "wins": 0,
-            "podiums": 0,
+            "totalWins": 0,
+            "totalPodiums": 0,
             "totalPoints": 0.0,
-            "polePositions": 0,
-            "fastestLaps": 0,
+            "totalPoles": 0,
+            "totalFastestLaps": 0,
+            "totalChampionships": 0,
             "drivers": set(),
             "seasons": [],
             "firstRace": None,
-            "lastRace": None
+            "lastRace": None,
+            "bestSeasonPosition": None,
+            "bestSeasonYear": None
         }
         
         for year in available_seasons:
@@ -384,23 +389,30 @@ class F1Service:
                             # Position stats
                             position = result.get("position")
                             if position:
-                                pos_int = int(position)
-                                if pos_int == 1:
-                                    year_wins += 1
-                                    stats["wins"] += 1
-                                if pos_int <= 3:
-                                    year_podiums += 1
-                                    stats["podiums"] += 1
+                                try:
+                                    pos_int = int(position)
+                                    if pos_int == 1:
+                                        year_wins += 1
+                                        stats["totalWins"] += 1
+                                    if pos_int <= 3:
+                                        year_podiums += 1
+                                        stats["totalPodiums"] += 1
+                                except (ValueError, TypeError):
+                                    pass
                             
-                            # Grid position (pole)
+                            # Grid position (pole) - check qualifying results
                             grid = result.get("grid")
-                            if grid and int(grid) == 1:
-                                stats["polePositions"] += 1
+                            if grid:
+                                try:
+                                    if int(grid) == 1:
+                                        stats["totalPoles"] += 1
+                                except (ValueError, TypeError):
+                                    pass
                             
                             # Fastest lap
                             fastest_lap = result.get("FastestLap", {})
                             if fastest_lap.get("rank") == "1":
-                                stats["fastestLaps"] += 1
+                                stats["totalFastestLaps"] += 1
                             
                             # Points
                             points = float(result.get("points", 0))
@@ -421,6 +433,38 @@ class F1Service:
                         "points": year_points
                     })
             
+            except FileNotFoundError:
+                continue
+        
+        # Calculate championship wins from standings data
+        for year in available_seasons:
+            try:
+                season_data = load_season_results(year)
+                standings_table = season_data.get("MRData", {}).get("StandingsTable", {})
+                standings_lists = standings_table.get("StandingsLists", [])
+                
+                if standings_lists:
+                    # Get final standings (last element)
+                    final_standings = standings_lists[-1]
+                    constructor_standings = final_standings.get("ConstructorStandings", [])
+                    
+                    for standing in constructor_standings:
+                        if standing.get("Constructor", {}).get("constructorId") == constructor_id:
+                            position = standing.get("position")
+                            try:
+                                pos_int = int(position)
+                                
+                                # Track best season position
+                                if stats["bestSeasonPosition"] is None or pos_int < stats["bestSeasonPosition"]:
+                                    stats["bestSeasonPosition"] = pos_int
+                                    stats["bestSeasonYear"] = year
+                                
+                                # Championship win
+                                if pos_int == 1:
+                                    stats["totalChampionships"] += 1
+                            except (ValueError, TypeError):
+                                pass
+                            break
             except FileNotFoundError:
                 continue
         

@@ -12,9 +12,11 @@
     <div class="header">
         <a href="/" class="logo">F1 Stats</a>
         <nav class="nav-links">
-            <a href="/docs" target="_blank">API Docs</a>
-            <a href="/redoc" target="_blank">Reference</a>
-            <a href="javascript:history.back()" class="back-button">← Back</a>
+            <a href="/static/drivers-list.html" class="active">Drivers</a>
+            <a href="/static/constructors-list.html">Teams</a>
+            <a href="/static/results.html">Seasons</a>
+            <a href="/static/compare.html">Compare</a>
+            <a href="/docs" target="_blank" class="api-link">API</a>
         </nav>
     </div>
     
@@ -38,6 +40,16 @@
             </div>
         </div>
         
+        <!-- Teams -->
+        <div class="card">
+            <div class="section-header">Teams</div>
+            <div id="teamsSection">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Season by Season History -->
         <div class="card">
             <div class="section-header">Season by Season</div>
@@ -47,230 +59,18 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Race Results -->
+        <div class="card">
+            <div class="section-header">Race Results</div>
+            <div id="raceResults">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <script>
-        // Get driver ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const driverId = urlParams.get('id');
-        
-        if (!driverId) {
-            document.getElementById('driverProfile').innerHTML = 
-                '<div class="error"><div class="error-title">No driver ID provided</div></div>';
-        } else {
-            loadDriverData(driverId);
-        }
-        
-        async function loadDriverData(driverId) {
-            try {
-                // Load driver basic info
-                const driverResponse = await fetch(`/api/drivers/${driverId}`);
-                const driverData = await driverResponse.json();
-                
-                if (!driverResponse.ok) {
-                    throw new Error('Driver not found');
-                }
-                
-                const driver = driverData.MRData?.DriverTable?.Drivers?.[0];
-                if (!driver) {
-                    throw new Error('Driver not found');
-                }
-                
-                renderDriverProfile(driver);
-                
-                // Load driver stats
-                const statsResponse = await fetch(`/api/drivers/${driverId}/stats`);
-                const statsData = await statsResponse.json();
-                renderCareerStats(statsData);
-                
-                // Load season history - try multiple years
-                await loadSeasonHistory(driverId);
-                
-            } catch (error) {
-                console.error('Error loading driver data:', error);
-                document.getElementById('driverProfile').innerHTML = 
-                    `<div class="error">
-                        <div class="error-title">Error loading driver data</div>
-                        <div>${error.message}</div>
-                    </div>`;
-                document.getElementById('careerStats').innerHTML = '';
-                document.getElementById('seasonHistory').innerHTML = '';
-            }
-        }
-        
-        function renderDriverProfile(driver) {
-            const fullName = `${driver.givenName} ${driver.familyName}`;
-            const nationality = driver.nationality || 'Unknown';
-            const dob = driver.dateOfBirth || 'Unknown';
-            const number = driver.permanentNumber || 'N/A';
-            const code = driver.code || 'N/A';
-            
-            document.getElementById('driverProfile').innerHTML = `
-                <div class="driver-name">${fullName}</div>
-                <div class="driver-info-grid">
-                    <div>
-                        <div class="info-label">Nationality</div>
-                        <div class="info-value">${nationality}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Date of Birth</div>
-                        <div class="info-value">${dob}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Race Number</div>
-                        <div class="info-value">#${number}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Driver Code</div>
-                        <div class="info-value">${code}</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function renderCareerStats(statsData) {
-            const stats = statsData.statistics || {};
-            const note = statsData.note || '';
-            
-            if (note) {
-                document.getElementById('careerStats').innerHTML = `
-                    <div class="note-message">${note}</div>
-                `;
-                return;
-            }
-            
-            document.getElementById('careerStats').innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.totalRaces || 0}</div>
-                        <div class="stat-label">Races</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.wins || 0}</div>
-                        <div class="stat-label">Wins</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.podiums || 0}</div>
-                        <div class="stat-label">Podiums</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.polePositions || 0}</div>
-                        <div class="stat-label">Poles</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.fastestLaps || 0}</div>
-                        <div class="stat-label">Fastest Laps</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.totalPoints || 0}</div>
-                        <div class="stat-label">Points</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${stats.dnfs || 0}</div>
-                        <div class="stat-label">DNFs</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        async function loadSeasonHistory(driverId) {
-            const seasonHistoryDiv = document.getElementById('seasonHistory');
-            
-            // Try to fetch results from available seasons (1984-2024)
-            const allSeasons = [];
-            const currentYear = new Date().getFullYear();
-            
-            // Try from 1984 to current year
-            const promises = [];
-            for (let year = 1984; year <= currentYear; year++) {
-                promises.push(
-                    fetch(`/api/drivers/${driverId}/seasons/${year}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.results && data.results.length > 0) {
-                                return { year, results: data.results };
-                            }
-                            return null;
-                        })
-                        .catch(() => null)
-                );
-            }
-            
-            const results = await Promise.all(promises);
-            const validSeasons = results.filter(s => s !== null);
-            
-            if (validSeasons.length === 0) {
-                seasonHistoryDiv.innerHTML = `
-                    <div class="note-message">
-                        No season history available for this driver in the database (1984-2024).
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort by year descending
-            validSeasons.sort((a, b) => b.year - a.year);
-            
-            // Calculate season summaries
-            const seasonSummaries = validSeasons.map(season => {
-                const results = season.results;
-                const wins = results.filter(r => r.position === '1' || r.position === 1).length;
-                const podiums = results.filter(r => {
-                    const pos = parseInt(r.position);
-                    return pos >= 1 && pos <= 3;
-                }).length;
-                const points = results.reduce((sum, r) => sum + (parseFloat(r.points) || 0), 0);
-                const races = results.length;
-                
-                // Get primary team (most races)
-                const teamCounts = {};
-                results.forEach(r => {
-                    const team = r.Constructor?.name || 'Unknown';
-                    teamCounts[team] = (teamCounts[team] || 0) + 1;
-                });
-                const primaryTeam = Object.keys(teamCounts).reduce((a, b) => 
-                    teamCounts[a] > teamCounts[b] ? a : b
-                );
-                
-                return {
-                    year: season.year,
-                    races,
-                    wins,
-                    podiums,
-                    points: points.toFixed(1),
-                    team: primaryTeam
-                };
-            });
-            
-            seasonHistoryDiv.innerHTML = `
-                <div class="table-container">
-                    <table class="season-history-table">
-                        <thead>
-                            <tr>
-                                <th>Season</th>
-                                <th>Team</th>
-                                <th class="text-center">Races</th>
-                                <th class="text-center">Wins</th>
-                                <th class="text-center">Podiums</th>
-                                <th class="text-right">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${seasonSummaries.map(s => `
-                                <tr>
-                                    <td class="highlight">${s.year}</td>
-                                    <td>${s.team}</td>
-                                    <td class="text-center">${s.races}</td>
-                                    <td class="text-center highlight">${s.wins}</td>
-                                    <td class="text-center">${s.podiums}</td>
-                                    <td class="text-right">${s.points}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-    </script>
+    <script type="module" src="/static/js/pages/driver-profile.js"></script>
 </body>
 </html>

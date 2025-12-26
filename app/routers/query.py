@@ -5,13 +5,15 @@ Thin HTTP handler that uses QueryParser and delegates to service layer.
 """
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Any, Dict
+from typing import Any, Dict, List
 import logging
+import difflib
 
 from ..query_parser import QueryParser
 from ..services import F1Service
 from .seasons import get_season_standings, get_season_winners
 from .drivers import search_drivers
+from ..json_loader import load_drivers, load_constructors
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -25,6 +27,97 @@ router = APIRouter(prefix="/api", tags=["Query"])
 # Pydantic model for request
 class QueryRequest(BaseModel):
     query: str
+
+
+def get_driver_suggestions(query_text: str) -> List[str]:
+    """
+    Get driver name suggestions based on fuzzy matching.
+    
+    Args:
+        query_text: The original query text
+        
+    Returns:
+        List of suggested driver names (max 3)
+    """
+    try:
+        # Extract potential driver names from query
+        words = query_text.lower().split()
+        drivers_data = load_drivers()
+        
+        # Get all driver surnames
+        all_surnames = []
+        for driver in drivers_data.get('MRData', {}).get('DriverTable', {}).get('Drivers', []):
+            surname = driver.get('familyName', '').lower()
+            if surname:
+                all_surnames.append(surname)
+        
+        # Find close matches for each word in query
+        suggestions = []
+        for word in words:
+            if len(word) >= 3:  # Only match words 3+ chars
+                matches = difflib.get_close_matches(word, all_surnames, n=3, cutoff=0.6)
+                suggestions.extend(matches)
+        
+        # Remove duplicates, limit to 3
+        return list(dict.fromkeys(suggestions))[:3]
+        
+    except Exception as e:
+        logger.error(f"Error getting driver suggestions: {e}")
+        return []
+
+
+def get_query_suggestions(query_text: str) -> List[str]:
+    """
+    Get example query suggestions based on the failed query.
+    
+    Args:
+        query_text: The original query text
+        
+    Returns:
+        List of suggested queries (max 5)
+    """
+    suggestions = []
+    query_lower = query_text.lower()
+    
+    # Detect what user might be asking for
+    if 'win' in query_lower or 'victory' in query_lower or 'champion' in query_lower:
+        suggestions.extend([
+            "Who won the 2023 championship?",
+            "How many wins does Hamilton have?",
+            "2023 season winners"
+        ])
+    
+    if 'stat' in query_lower or 'record' in query_lower or 'how many' in query_lower:
+        suggestions.extend([
+            "Hamilton stats",
+            "Verstappen career statistics",
+            "Red Bull stats 2020-2023"
+        ])
+    
+    if 'compare' in query_lower or 'vs' in query_lower or 'versus' in query_lower:
+        suggestions.extend([
+            "Compare Hamilton vs Verstappen",
+            "Vettel vs Alonso head to head"
+        ])
+    
+    if 'stand' in query_lower:
+        suggestions.extend([
+            "2023 standings",
+            "2022 championship standings"
+        ])
+    
+    # Default suggestions if none matched
+    if not suggestions:
+        suggestions = [
+            "Who won the 2023 championship?",
+            "Hamilton career stats",
+            "2023 standings",
+            "Compare Hamilton vs Verstappen",
+            "Red Bull statistics"
+        ]
+    
+    # Remove duplicates, limit to 5
+    return list(dict.fromkeys(suggestions))[:5]
 
 
 @router.post("/query")
@@ -57,9 +150,20 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
         parsed = query_parser.parse(query_text)
         
         if not parsed:
+            # Get helpful suggestions
+            driver_suggestions = get_driver_suggestions(query_text)
+            query_suggestions = get_query_suggestions(query_text)
+            
+            error_msg = "Could not understand query."
+            
+            if driver_suggestions:
+                error_msg += f" Did you mean: {', '.join(driver_suggestions)}?"
+            
+            error_msg += " Try queries like: " + " | ".join(query_suggestions)
+            
             raise HTTPException(
                 status_code=400, 
-                detail="Could not understand query. Try being more specific (e.g., 'hamilton stats', '2023 championship')"
+                detail=error_msg
             )
         
         # Route to appropriate endpoint based on action
@@ -105,7 +209,12 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
             try:
                 data = F1Service.get_driver_statistics(driver_id, start_year, end_year)
             except ValueError as e:
-                raise HTTPException(status_code=404, detail=str(e))
+                # Driver not found - provide suggestions
+                driver_suggestions = get_driver_suggestions(driver_id)
+                error_msg = f"Driver '{driver_id}' not found."
+                if driver_suggestions:
+                    error_msg += f" Did you mean: {', '.join(driver_suggestions)}?"
+                raise HTTPException(status_code=404, detail=error_msg)
             
         elif '/stats' in endpoint and '/constructors/' in endpoint:
             # Constructor stats - use service layer
@@ -118,7 +227,21 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
             try:
                 data = F1Service.get_constructor_statistics(constructor_id, start_year, end_year)
             except ValueError as e:
-                raise HTTPException(status_code=404, detail=str(e))
+                # Constructor not found - provide suggestions
+                try:
+                    constructors_data = load_constructors()
+                    all_constructors = [
+                        c.get('name', '').lower() 
+                        for c in constructors_data.get('MRData', {}).get('ConstructorTable', {}).get('Constructors', [])
+                    ]
+                    suggestions = difflib.get_close_matches(constructor_id.lower(), all_constructors, n=3, cutoff=0.6)
+                    
+                    error_msg = f"Constructor '{constructor_id}' not found."
+                    if suggestions:
+                        error_msg += f" Did you mean: {', '.join(suggestions)}?"
+                    raise HTTPException(status_code=404, detail=error_msg)
+                except:
+                    raise HTTPException(status_code=404, detail=str(e))
             
         elif 'head-to-head' in endpoint:
             # Head to head comparison - use service layer
@@ -131,7 +254,21 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
             try:
                 data = F1Service.get_head_to_head_comparison(driver1, driver2)
             except ValueError as e:
-                raise HTTPException(status_code=404, detail=str(e))
+                # Driver not found in comparison - provide suggestions
+                error_str = str(e)
+                driver_suggestions = []
+                
+                # Try to extract which driver wasn't found
+                if driver1 and driver1 in error_str:
+                    driver_suggestions = get_driver_suggestions(driver1)
+                elif driver2 and driver2 in error_str:
+                    driver_suggestions = get_driver_suggestions(driver2)
+                
+                error_msg = str(e)
+                if driver_suggestions:
+                    error_msg += f" Did you mean: {', '.join(driver_suggestions)}?"
+                
+                raise HTTPException(status_code=404, detail=error_msg)
             
         elif 'winners' in endpoint:
             # Season winners - use existing endpoint

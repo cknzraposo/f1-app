@@ -1,4 +1,33 @@
 /**
+ * ⚠️ DEPRECATED - DO NOT USE FOR NEW FEATURES
+ * 
+ * This monolithic file has been replaced by the modular system in /static/js/
+ * 
+ * Phase 2 Migration Complete (December 26, 2025):
+ * - All 8 pages now use dedicated controllers in /static/js/pages/
+ * - Shared functionality extracted to /static/js/core/ and /static/js/components/
+ * - This file remains for reference and rollback capability only
+ * 
+ * New Architecture:
+ * - Landing page: index.html → js/pages/index.js
+ * - Query results: query-results.html → js/pages/results.js
+ * - Driver profiles: drivers.html → js/pages/driver-profile.js
+ * - Driver list: drivers-list.html → js/pages/driver-list.js
+ * - Constructor profiles: constructor.html → js/pages/constructor-profile.js
+ * - Constructor list: constructors-list.html → js/pages/constructor-list.js
+ * - Season browser: results.html → js/pages/season-browser.js
+ * - Driver comparison: compare.html → compare.js (refactored)
+ * 
+ * Documentation: /static/js/PHASE2-FINAL.md
+ * 
+ * @deprecated Use /static/js/pages/ controllers instead
+ */
+
+// ============================================================================
+// LEGACY CODE BELOW - Use /static/js/ modules for new features
+// ============================================================================
+
+/**
  * F1 Stats - Modern JavaScript Application
  * Handles search, autocomplete, table rendering, and pagination
  */
@@ -14,6 +43,150 @@ let currentPage = 1;
 let pageSize = 25;
 let currentData = null;
 let currentDataType = null;
+let queryHistory = [];
+const MAX_HISTORY = 10;
+
+// ============================================
+// QUERY HISTORY MANAGEMENT
+// ============================================
+
+function loadQueryHistory() {
+    try {
+        const stored = localStorage.getItem('f1QueryHistory');
+        if (stored) {
+            queryHistory = JSON.parse(stored);
+        }
+    } catch (error) {
+        console.error('Failed to load query history:', error);
+        queryHistory = [];
+    }
+}
+
+function saveQueryToHistory(query) {
+    // Remove duplicates
+    queryHistory = queryHistory.filter(q => q.text !== query);
+    
+    // Add to beginning
+    queryHistory.unshift({
+        text: query,
+        timestamp: new Date().toISOString()
+    });
+    
+    // Limit history size
+    if (queryHistory.length > MAX_HISTORY) {
+        queryHistory = queryHistory.slice(0, MAX_HISTORY);
+    }
+    
+    // Save to localStorage
+    try {
+        localStorage.setItem('f1QueryHistory', JSON.stringify(queryHistory));
+    } catch (error) {
+        console.error('Failed to save query history:', error);
+    }
+}
+
+function showQueryHistory() {
+    const historyEl = document.getElementById('queryHistory');
+    if (!historyEl || queryHistory.length === 0) return;
+    
+    historyEl.innerHTML = `
+        <div class="history-header">
+            <span>Recent Queries</span>
+            <button class="clear-history" onclick="clearQueryHistory()">Clear</button>
+        </div>
+        ${queryHistory.slice(0, 5).map(q => `
+            <div class="history-item" onclick="setQuery('${q.text.replace(/'/g, "\\'")}')">
+                <svg class="history-icon" viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z"/>
+                </svg>
+                ${q.text}
+            </div>
+        `).join('')}
+    `;
+    historyEl.classList.add('active');
+}
+
+function hideQueryHistory() {
+    const historyEl = document.getElementById('queryHistory');
+    if (historyEl) {
+        historyEl.classList.remove('active');
+    }
+}
+
+function clearQueryHistory() {
+    queryHistory = [];
+    localStorage.removeItem('f1QueryHistory');
+    hideQueryHistory();
+}
+
+// ============================================
+// SMART QUERY SUGGESTIONS
+// ============================================
+
+function showSmartSuggestions(input) {
+    const suggestionsEl = document.getElementById('suggestions');
+    if (!suggestionsEl) return;
+    
+    const lowerInput = input.toLowerCase();
+    const suggestions = [];
+    
+    // Year-based suggestions
+    if (/\d{4}/.test(input)) {
+        const year = input.match(/\d{4}/)[0];
+        if (year >= 1984 && year <= 2024) {
+            suggestions.push(`Who won the ${year} championship?`);
+            suggestions.push(`${year} standings`);
+            suggestions.push(`${year} race winners`);
+        }
+    }
+    
+    // Driver-based suggestions
+    const driverMatch = allDrivers.find(d => 
+        lowerInput.includes(d.familyName.toLowerCase()) ||
+        lowerInput.includes(`${d.givenName} ${d.familyName}`.toLowerCase())
+    );
+    if (driverMatch) {
+        const fullName = `${driverMatch.givenName} ${driverMatch.familyName}`;
+        suggestions.push(`How many wins does ${fullName} have?`);
+        suggestions.push(`${fullName} career stats`);
+        suggestions.push(`${fullName} championships`);
+    }
+    
+    // Constructor-based suggestions
+    const constructorMatch = allConstructors.find(c =>
+        lowerInput.includes(c.name.toLowerCase())
+    );
+    if (constructorMatch) {
+        suggestions.push(`${constructorMatch.name} statistics`);
+        suggestions.push(`${constructorMatch.name} championships`);
+    }
+    
+    // Comparison suggestions
+    if (lowerInput.includes('compare') || lowerInput.includes('vs') || lowerInput.includes('versus')) {
+        if (!driverMatch) {
+            suggestions.push('Compare Hamilton vs Verstappen');
+            suggestions.push('Compare Vettel vs Alonso');
+        }
+    }
+    
+    // Show suggestions if any
+    if (suggestions.length > 0 && input.length > 3) {
+        suggestionsEl.innerHTML = `
+            <div class="suggestions-header">Suggested queries:</div>
+            ${suggestions.slice(0, 3).map(s => `
+                <div class="suggestion-item" onclick="setQuery('${s.replace(/'/g, "\\'")}')">
+                    <svg class="suggestion-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+                    </svg>
+                    ${s}
+                </div>
+            `).join('')}
+        `;
+        suggestionsEl.classList.add('active');
+    } else {
+        suggestionsEl.classList.remove('active');
+    }
+}
 
 // ============================================
 // INITIALIZATION
@@ -38,9 +211,13 @@ async function loadAutocompleteData() {
 
 // Load on page start
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAutocompleteData);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAutocompleteData();
+        loadQueryHistory();
+    });
 } else {
     loadAutocompleteData();
+    loadQueryHistory();
 }
 
 // ============================================
@@ -50,6 +227,8 @@ if (document.readyState === 'loading') {
 function setQuery(query) {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = query;
+    hideAutocomplete();
+    hideQueryHistory();
     handleSearch();
 }
 
@@ -58,6 +237,9 @@ function handleSearch() {
     const query = searchInput.value.trim();
     
     if (!query) return;
+    
+    // Save to history
+    saveQueryToHistory(query);
     
     // Redirect to results page with query parameter
     window.location.href = `/static/results.html?q=${encodeURIComponent(query)}`;
@@ -99,13 +281,30 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Trigger autocomplete on input
         searchInput.addEventListener('input', (e) => {
-            handleAutocompleteInput(e.target.value);
+            const value = e.target.value;
+            handleAutocompleteInput(value);
+            
+            // Show smart suggestions
+            if (value.length > 2) {
+                showSmartSuggestions(value);
+            } else {
+                document.getElementById('suggestions')?.classList.remove('active');
+            }
         });
         
-        // Hide autocomplete when clicking outside
+        // Show history on focus if input is empty
+        searchInput.addEventListener('focus', (e) => {
+            if (!e.target.value && queryHistory.length > 0) {
+                showQueryHistory();
+            }
+        });
+        
+        // Hide autocomplete/suggestions when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-container')) {
                 hideAutocomplete();
+                hideQueryHistory();
+                document.getElementById('suggestions')?.classList.remove('active');
             }
         });
     }
@@ -261,6 +460,7 @@ function initResultsPage() {
 
 async function executeQuery(query) {
     const resultsContent = document.getElementById('resultsContent');
+    const startTime = performance.now();
     
     try {
         const response = await fetch('/api/query', {
@@ -270,6 +470,9 @@ async function executeQuery(query) {
             },
             body: JSON.stringify({ query })
         });
+        
+        const endTime = performance.now();
+        const processingTime = Math.round(endTime - startTime);
         
         const result = await response.json();
         
@@ -286,12 +489,50 @@ async function executeQuery(query) {
         currentDataType = result.dataType;
         currentPage = 1;
         
+        // Show processing info
+        showProcessingInfo(processingTime, result.action || 'keyword_parser', result.dataType);
+        
         // Render results
         renderResults(result.data, result.dataType);
         
     } catch (error) {
         showError(error.message);
     }
+}
+
+function showProcessingInfo(timeMs, source, dataType) {
+    const resultsContent = document.getElementById('resultsContent');
+    
+    // Determine source label and color
+    let sourceLabel = '⚡ Keyword Parser';
+    let sourceColor = '#10b981'; // green
+    
+    if (source.includes('llm')) {
+        sourceLabel = '🤖 LLM';
+        sourceColor = '#3b82f6'; // blue
+    }
+    
+    // Create processing info banner
+    const infoBanner = `
+        <div class="processing-info" style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span style="color: ${sourceColor}; font-weight: 600;">${sourceLabel}</span>
+                <span style="color: #6b7280;">•</span>
+                <span style="color: #374151;">
+                    <strong>${timeMs}ms</strong> response time
+                </span>
+                <span style="color: #6b7280;">•</span>
+                <span style="color: #374151;">
+                    Type: <strong>${dataType.replace(/_/g, ' ')}</strong>
+                </span>
+            </div>
+            <div style="color: #9ca3af; font-size: 0.75rem;">
+                ${new Date().toLocaleTimeString()}
+            </div>
+        </div>
+    `;
+    
+    resultsContent.insertAdjacentHTML('afterbegin', infoBanner);
 }
 
 function showError(message) {
