@@ -7,19 +7,89 @@
 import { getConstructor, getConstructorStats, getDrivers } from '../core/api-client.js';
 import { parseQueryString, getOrdinal } from '../utils/formatters.js';
 
-// Nationality to flag emoji mapping
-const NATIONALITY_FLAGS = {
-    'American': '🇺🇸', 'British': '🇬🇧', 'German': '🇩🇪', 'Brazilian': '🇧🇷',
-    'French': '🇫🇷', 'Italian': '🇮🇹', 'Spanish': '🇪🇸', 'Finnish': '🇫🇮',
-    'Australian': '🇦🇺', 'Austrian': '🇦🇹', 'Belgian': '🇧🇪', 'Canadian': '🇨🇦',
-    'Dutch': '🇳🇱', 'Japanese': '🇯🇵', 'Mexican': '🇲🇽', 'Polish': '🇵🇱',
-    'Swedish': '🇸🇪', 'Swiss': '🇨🇭', 'Argentine': '🇦🇷', 'Indian': '🇮🇳',
-    'Malaysian': '🇲🇾', 'Monegasque': '🇲🇨', 'New Zealander': '🇳🇿',
-    'Portuguese': '🇵🇹', 'Russian': '🇷🇺', 'South African': '🇿🇦'
+// Nationality to country code mapping
+const NATIONALITY_TO_FLAG_CODE = {
+    'American': 'us',
+    'British': 'gb',
+    'German': 'de',
+    'Brazilian': 'br',
+    'French': 'fr',
+    'Italian': 'it',
+    'Spanish': 'es',
+    'Finnish': 'fi',
+    'Australian': 'au',
+    'Austrian': 'at',
+    'Belgian': 'be',
+    'Canadian': 'ca',
+    'Dutch': 'nl',
+    'Japanese': 'jp',
+    'Mexican': 'mx',
+    'Polish': 'pl',
+    'Swedish': 'se',
+    'Swiss': 'ch',
+    'Argentine': 'ar',
+    'Colombian': 'co',
+    'Danish': 'dk',
+    'Indian': 'in',
+    'Irish': 'ie',
+    'Malaysian': 'my',
+    'Monegasque': 'mc',
+    'New Zealander': 'nz',
+    'Portuguese': 'pt',
+    'Russian': 'ru',
+    'South African': 'za',
+    'Thai': 'th',
+    'Venezuelan': 've',
+    'Chinese': 'cn',
+    'Czech': 'cz',
+    'Hungarian': 'hu',
+    'Liechtensteiner': 'li',
+    'Rhodesian': 'zw',
+    'East German': 'de',
+    'Chilean': 'cl',
+    'Uruguayan': 'uy',
+    'Indonesian': 'id'
 };
 
+/**
+ * Get flag emoji for nationality using GitHub CDN
+ * Returns an img tag with the flag from GitHub's emoji CDN
+ */
 function getFlagEmoji(nationality) {
-    return NATIONALITY_FLAGS[nationality] || '🏴';
+    const countryCode = NATIONALITY_TO_FLAG_CODE[nationality];
+    
+    if (!countryCode) {
+        return '🏁'; // Fallback for unknown nationalities
+    }
+    
+    // Use GitHub's emoji CDN directly (no API call needed)
+    const flagUrl = `https://github.githubassets.com/images/icons/emoji/unicode/1f1${getRegionalIndicator(countryCode[0])}-1f1${getRegionalIndicator(countryCode[1])}.png`;
+    
+    return `<img src="${flagUrl}" alt="${nationality} flag" style="width: 20px; height: 20px; vertical-align: middle; display: inline-block;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display:none;">${getUnicodeFlagEmoji(countryCode)}</span>`;
+}
+
+/**
+ * Convert country code letter to regional indicator hex
+ */
+function getRegionalIndicator(letter) {
+    // Regional indicator symbols start at U+1F1E6 (A) through U+1F1FF (Z)
+    // a = 97 in ASCII, A would be 65, so we normalize to lowercase
+    const code = letter.toLowerCase().charCodeAt(0) - 97 + 0xe6;
+    return code.toString(16);
+}
+
+/**
+ * Get Unicode flag emoji as fallback
+ */
+function getUnicodeFlagEmoji(countryCode) {
+    // Convert country code to Unicode flag emoji
+    // e.g., 'us' -> U+1F1FA U+1F1F8 -> 🇺🇸
+    const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 0x1F1E6 - 65 + char.charCodeAt(0));
+    
+    return String.fromCodePoint(...codePoints);
 }
 
 /**
@@ -51,9 +121,19 @@ async function loadConstructorData(constructorId) {
     console.log('loadConstructorData called with:', constructorId);
     try {
         // Show loading state
-        document.getElementById('loading').classList.remove('hidden');
-        document.getElementById('error').classList.add('hidden');
-        document.getElementById('constructor-details').classList.add('hidden');
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const detailsEl = document.getElementById('constructor-details');
+        
+        console.log('Elements found:', {
+            loading: !!loadingEl,
+            error: !!errorEl,
+            details: !!detailsEl
+        });
+        
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (errorEl) errorEl.classList.add('hidden');
+        if (detailsEl) detailsEl.classList.add('hidden');
         
         console.log('Fetching basic constructor info...');
         // PRIORITY 1: Load basic info first (fast - single JSON file)
@@ -63,15 +143,18 @@ async function loadConstructorData(constructorId) {
         const constructor = basicData.MRData?.ConstructorTable?.Constructors?.[0];
         
         if (!constructor) {
+            console.error('Constructor not found in response');
             throw new Error('Constructor not found');
         }
+        
+        console.log('Constructor found:', constructor);
         
         // Display basic info immediately
         displayBasicInfo(constructor);
         
         // Show the page with basic info
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('constructor-details').classList.remove('hidden');
+        if (loadingEl) loadingEl.classList.add('hidden');
+        if (detailsEl) detailsEl.classList.remove('hidden');
         
         // PRIORITY 2: Load statistics in background (slower)
         console.log('Fetching statistics in background...');
@@ -79,6 +162,7 @@ async function loadConstructorData(constructorId) {
         
     } catch (error) {
         console.error('Error loading constructor data:', error);
+        console.error('Error stack:', error.stack);
         showError(error.message || 'Failed to load constructor details');
     }
 }
@@ -126,7 +210,7 @@ function displayBasicInfo(constructor) {
     
     if (nationalityEl) {
         const flagEmoji = getFlagEmoji(constructor.nationality);
-        nationalityEl.textContent = `${flagEmoji} ${constructor.nationality}`;
+        nationalityEl.innerHTML = `${flagEmoji} ${constructor.nationality}`;
     }
     
     // Wikipedia link
@@ -136,8 +220,16 @@ function displayBasicInfo(constructor) {
     }
     
     // Show loading placeholders for stats
-    document.getElementById('drivers-list').innerHTML = '<p class="text-gray-600">Loading drivers...</p>';
-    document.getElementById('season-history').innerHTML = '<p class="text-gray-600">Loading season history...</p>';
+    const driversListEl = document.getElementById('drivers-list');
+    const seasonHistoryEl = document.getElementById('season-history');
+    
+    if (driversListEl) {
+        driversListEl.innerHTML = '<p class="text-gray-600">Loading drivers...</p>';
+    }
+    
+    if (seasonHistoryEl) {
+        seasonHistoryEl.innerHTML = '<p class="text-gray-600">Loading season history...</p>';
+    }
 }
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { getDrivers, getConstructors, prefetchCommonData } from '../core/api-client.js';
-import { setAllDrivers, setAllConstructors } from '../core/state-manager.js';
+import { setAllDrivers, setAllConstructors, getAllDrivers } from '../core/state-manager.js';
 import { initAutocomplete, hideAutocomplete } from '../components/autocomplete.js';
 import { initQueryHistory, saveQueryToHistory, hideQueryHistory } from '../components/query-history.js';
 import { initSuggestions, hideSuggestions } from '../components/suggestions.js';
@@ -98,7 +98,7 @@ function setupSearch() {
 }
 
 /**
- * Handle search submission
+ * Handle search submission - redirect to driver details page
  */
 function handleSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -109,13 +109,41 @@ function handleSearch() {
         return;
     }
     
-    console.log('Executing search:', query);
+    console.log('Searching for driver:', query);
     
     // Save to history
     saveQueryToHistory(query);
     
-    // Redirect to query results page
-    window.location.href = `/static/query-results.html?q=${encodeURIComponent(query)}`;
+    // Search for matching driver
+    const drivers = getAllDrivers();
+    const lowerQuery = query.toLowerCase();
+    
+    // Find matching driver
+    let matchedDriver = null;
+    
+    for (const driver of drivers) {
+        const fullName = `${driver.givenName} ${driver.familyName}`.toLowerCase();
+        const familyName = driver.familyName.toLowerCase();
+        const givenName = driver.givenName.toLowerCase();
+        
+        // Exact match or contains match
+        if (fullName === lowerQuery || 
+            familyName === lowerQuery || 
+            givenName === lowerQuery ||
+            fullName.includes(lowerQuery)) {
+            matchedDriver = driver;
+            break;
+        }
+    }
+    
+    if (matchedDriver) {
+        // Redirect to driver details page
+        window.location.href = `/static/drivers.html?id=${matchedDriver.driverId}`;
+    } else {
+        // No match found - could show error or redirect to drivers list
+        alert('Driver not found. Please try another search or use the autocomplete suggestions.');
+        searchInput.value = '';
+    }
 }
 
 // Make handleSearch global for onclick attributes
@@ -138,14 +166,11 @@ function setupAutocomplete() {
     }
     
     initAutocomplete(searchInput, autocompleteEl, (value, type) => {
-        // When autocomplete item is selected
+        // When autocomplete item is selected (value is driverId)
         if (type === 'driver') {
-            searchInput.value = `Tell me about ${value} stats`;
-        } else if (type === 'constructor') {
-            searchInput.value = `Tell me about ${value}`;
+            // Redirect directly to driver details page
+            window.location.href = `/static/drivers.html?id=${value}`;
         }
-        
-        handleSearch();
     });
 }
 

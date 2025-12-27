@@ -197,3 +197,19 @@ export function parseQueryString(queryString) {
 export function buildQueryString(params) {
     return new URLSearchParams(params).toString();
 }
+
+/**
+ * Get ordinal suffix for a number (1st, 2nd, 3rd, etc.)
+ * @param {number} num - The number to convert
+ * @returns {string} Ordinal string (e.g., "1st", "2nd", "3rd")
+ */
+export function getOrdinal(num) {
+    if (num === null || num === undefined) return '';
+    
+    const n = parseInt(num);
+    if (isNaN(n)) return '';
+    
+    const suffix = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (suffix[(v - 20) % 10] || suffix[v] || suffix[0]);
+}

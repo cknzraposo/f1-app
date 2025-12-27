@@ -1,77 +1,51 @@
 /**
  * Smart Query Suggestions Component
- * Generates contextual query suggestions based on user input
+ * Generates contextual driver search suggestions based on user input
  */
 
-import { getAllDrivers, getAllConstructors } from '../core/state-manager.js';
+import { getAllDrivers } from '../core/state-manager.js';
 
 /**
- * Generate smart suggestions based on input
+ * Generate smart driver suggestions based on input
  * @param {string} input - User's current input text
- * @returns {Array<string>} Array of suggestion strings
+ * @returns {Array<string>} Array of driver name suggestions
  */
 export function generateSuggestions(input) {
-    if (!input || input.length < 3) {
+    if (!input || input.length < 2) {
         return [];
     }
     
     const lowerInput = input.toLowerCase();
     const suggestions = [];
     
-    // Year-based suggestions
-    const yearMatch = input.match(/\d{4}/);
-    if (yearMatch) {
-        const year = yearMatch[0];
-        if (year >= 1984 && year <= 2024) {
-            suggestions.push(`Who won the ${year} championship?`);
-            suggestions.push(`${year} standings`);
-            suggestions.push(`${year} race winners`);
-        }
-    }
-    
-    // Driver-based suggestions
+    // Get all drivers
     const drivers = getAllDrivers();
-    const driverMatch = drivers.find(d => 
-        lowerInput.includes(d.familyName.toLowerCase()) ||
-        lowerInput.includes(`${d.givenName} ${d.familyName}`.toLowerCase())
-    );
-    if (driverMatch) {
-        const fullName = `${driverMatch.givenName} ${driverMatch.familyName}`;
-        suggestions.push(`How many wins does ${fullName} have?`);
-        suggestions.push(`${fullName} career stats`);
-        suggestions.push(`${fullName} championships`);
-    }
     
-    // Constructor-based suggestions
-    const constructors = getAllConstructors();
-    const constructorMatch = constructors.find(c =>
-        lowerInput.includes(c.name.toLowerCase())
-    );
-    if (constructorMatch) {
-        suggestions.push(`${constructorMatch.name} statistics`);
-        suggestions.push(`${constructorMatch.name} championships`);
-    }
+    // Find drivers that match the input
+    const matchingDrivers = drivers.filter(d => {
+        const fullName = `${d.givenName} ${d.familyName}`.toLowerCase();
+        const familyName = d.familyName.toLowerCase();
+        const givenName = d.givenName.toLowerCase();
+        
+        return fullName.includes(lowerInput) || 
+               familyName.includes(lowerInput) || 
+               givenName.includes(lowerInput);
+    });
     
-    // Comparison suggestions
-    if (lowerInput.includes('compare') || lowerInput.includes('vs') || lowerInput.includes('versus')) {
-        if (!driverMatch) {
-            suggestions.push('Compare Hamilton vs Verstappen');
-            suggestions.push('Compare Vettel vs Alonso');
-        }
-    }
+    // Add up to 5 matching drivers
+    matchingDrivers.slice(0, 5).forEach(driver => {
+        suggestions.push(`${driver.givenName} ${driver.familyName}`);
+    });
     
-    // General suggestions if no specific context
-    if (suggestions.length === 0 && !yearMatch && !driverMatch && !constructorMatch) {
-        if (lowerInput.includes('champion')) {
-            suggestions.push('Who won the 2023 championship?');
-            suggestions.push('Most championships all time');
-        } else if (lowerInput.includes('win')) {
-            suggestions.push('Most wins 2023');
-            suggestions.push('Most wins all time');
-        } else if (lowerInput.includes('pole')) {
-            suggestions.push('Most pole positions 2023');
-            suggestions.push('Most pole positions all time');
-        }
+    // If no matches, suggest popular drivers
+    if (suggestions.length === 0) {
+        const popularDrivers = ['Lewis Hamilton', 'Max Verstappen', 'Fernando Alonso', 'Sebastian Vettel', 'Michael Schumacher'];
+        const availableDrivers = drivers.filter(d => 
+            popularDrivers.includes(`${d.givenName} ${d.familyName}`)
+        );
+        availableDrivers.slice(0, 3).forEach(driver => {
+            suggestions.push(`${driver.givenName} ${driver.familyName}`);
+        });
     }
     
     return suggestions;

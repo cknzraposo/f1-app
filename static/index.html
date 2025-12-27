@@ -22,16 +22,16 @@
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content">
-            <h1>Formula 1 Data Hub</h1>
+            <h1>Formula 1 Stats</h1>
             <p class="subtitle">Explore 40+ years of F1 history (1984-2024)</p>
             
-            <!-- Search Box -->
+            <!-- Driver Search Box -->
             <div class="search-container">
                 <div class="search-box">
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Ask anything... e.g., 'Who won the 2023 championship?'"
+                        placeholder="Search for a driver... e.g., 'Lewis Hamilton', 'Verstappen'"
                         autocomplete="off"
                     />
                     <svg class="search-icon" onclick="handleSearch()" viewBox="0 0 24 24">
@@ -43,63 +43,29 @@
                 <div id="queryHistory" class="query-history"></div>
             </div>
             
-            <!-- Try These Queries -->
-            <p class="query-chips-title">Try these queries</p>
-            <div class="chips-grid">
-                <!-- Championships -->
-                <div class="chip-category">
-                    <div class="category-label">🏆 Championships</div>
-                    <div class="category-chips">
-                        <div class="chip" onclick="setQuery('Who won the 2010 championship?')">
-                            Who won the 2010 championship?
-                        </div>
-                        <div class="chip" onclick="setQuery('2021 championship standings')">
-                            2021 championship standings
-                        </div>
-                    </div>
-                </div>
+            <!-- API Description -->
+            <div style="max-width: 600px; margin: 2rem auto 0; text-align: center;">
+                <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem;">
+                    Access comprehensive Formula 1 data through our REST API. Query driver statistics, 
+                    championship standings, race results, and team performance across 40+ years of racing history.
+                </p>
                 
-                <!-- Driver Stats -->
-                <div class="chip-category">
-                    <div class="category-label">📊 Driver Stats</div>
-                    <div class="category-chips">
-                        <div class="chip" onclick="setQuery('How many wins does Hamilton have?')">
-                            How many wins does Hamilton have?
-                        </div>
-                        <div class="chip" onclick="setQuery('Tell me about Verstappen stats')">
-                            Tell me about Verstappen's stats
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Comparisons -->
-                <div class="chip-category">
-                    <div class="category-label">⚔️ Comparisons</div>
-                    <div class="category-chips">
-                        <div class="chip" onclick="setQuery('Compare Vettel vs Alonso')">
-                            Compare Vettel vs Alonso
-                        </div>
-                        <div class="chip" onclick="setQuery('Hamilton versus Schumacher')">
-                            Hamilton versus Schumacher
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Season Data -->
-                <div class="chip-category">
-                    <div class="category-label">🏁 Season Data</div>
-                    <div class="category-chips">
-                        <div class="chip" onclick="setQuery('2023 race winners')">
-                            2023 race winners
-                        </div>
-                        <div class="chip" onclick="setQuery('Who won the most races in 2019?')">
-                            Who won the most races in 2019?
-                        </div>
-                    </div>
-                </div>
+                <!-- CTA Button -->
+                <a href="/static/results.html" 
+                   style="display: inline-block; background: linear-gradient(135deg, #e10600 0%, #ff1e00 100%); 
+                          color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; 
+                          font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(225,6,0,0.3); 
+                          transition: transform 0.2s, box-shadow 0.2s;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(225,6,0,0.4)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(225,6,0,0.3)';">
+                    Explore Seasons
+                </a>
             </div>
+            
+            <p class="note" style="margin-top: 2rem;">Data sourced from Ergast API | Updated through 2024 season</p>
         </div>
     </div>
+
     
     <script type="module" src="/static/js/pages/index.js"></script>
 </body>

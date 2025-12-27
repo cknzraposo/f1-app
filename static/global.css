@@ -126,7 +126,8 @@ body {
             width: 100%;
             padding: 20px 60px 20px 24px;
             background: transparent;
-            border: none;
+            border: 1px solid #666;
+            border-radius: 8px;
             color: #fff;
             font-size: 1.1em;
             outline: none;

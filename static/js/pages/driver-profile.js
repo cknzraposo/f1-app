@@ -11,54 +11,88 @@ import { parseQueryString, escapeHtml } from '../utils/formatters.js';
 // NATIONALITY TO FLAG EMOJI MAPPING
 // ============================================
 
-const NATIONALITY_FLAGS = {
-    'American': '🇺🇸',
-    'British': '🇬🇧',
-    'German': '🇩🇪',
-    'Brazilian': '🇧🇷',
-    'French': '🇫🇷',
-    'Italian': '🇮🇹',
-    'Spanish': '🇪🇸',
-    'Finnish': '🇫🇮',
-    'Australian': '🇦🇺',
-    'Austrian': '🇦🇹',
-    'Belgian': '🇧🇪',
-    'Canadian': '🇨🇦',
-    'Dutch': '🇳🇱',
-    'Japanese': '🇯🇵',
-    'Mexican': '🇲🇽',
-    'Polish': '🇵🇱',
-    'Swedish': '🇸🇪',
-    'Swiss': '🇨🇭',
-    'Argentine': '🇦🇷',
-    'Colombian': '🇨🇴',
-    'Danish': '🇩🇰',
-    'Indian': '🇮🇳',
-    'Irish': '🇮🇪',
-    'Malaysian': '🇲🇾',
-    'Monegasque': '🇲🇨',
-    'New Zealander': '🇳🇿',
-    'Portuguese': '🇵🇹',
-    'Russian': '🇷🇺',
-    'South African': '🇿🇦',
-    'Thai': '🇹🇭',
-    'Venezuelan': '🇻🇪',
-    'Chinese': '🇨🇳',
-    'Czech': '🇨🇿',
-    'Hungarian': '🇭🇺',
-    'Liechtensteiner': '🇱🇮',
-    'Rhodesian': '🇿🇼',
-    'East German': '🇩🇪',
-    'Chilean': '🇨🇱',
-    'Uruguayan': '🇺🇾',
-    'Indonesian': '🇮🇩'
+const NATIONALITY_TO_FLAG_CODE = {
+    'American': 'us',
+    'British': 'gb',
+    'German': 'de',
+    'Brazilian': 'br',
+    'French': 'fr',
+    'Italian': 'it',
+    'Spanish': 'es',
+    'Finnish': 'fi',
+    'Australian': 'au',
+    'Austrian': 'at',
+    'Belgian': 'be',
+    'Canadian': 'ca',
+    'Dutch': 'nl',
+    'Japanese': 'jp',
+    'Mexican': 'mx',
+    'Polish': 'pl',
+    'Swedish': 'se',
+    'Swiss': 'ch',
+    'Argentine': 'ar',
+    'Colombian': 'co',
+    'Danish': 'dk',
+    'Indian': 'in',
+    'Irish': 'ie',
+    'Malaysian': 'my',
+    'Monegasque': 'mc',
+    'New Zealander': 'nz',
+    'Portuguese': 'pt',
+    'Russian': 'ru',
+    'South African': 'za',
+    'Thai': 'th',
+    'Venezuelan': 've',
+    'Chinese': 'cn',
+    'Czech': 'cz',
+    'Hungarian': 'hu',
+    'Liechtensteiner': 'li',
+    'Rhodesian': 'zw',
+    'East German': 'de',
+    'Chilean': 'cl',
+    'Uruguayan': 'uy',
+    'Indonesian': 'id'
 };
 
 /**
- * Get flag emoji for nationality
+ * Get flag emoji for nationality using GitHub CDN
+ * Returns an img tag with the flag from GitHub's emoji CDN
  */
 function getFlagEmoji(nationality) {
-    return NATIONALITY_FLAGS[nationality] || '🏁';
+    const countryCode = NATIONALITY_TO_FLAG_CODE[nationality];
+    
+    if (!countryCode) {
+        return '🏁'; // Fallback for unknown nationalities
+    }
+    
+    // Use GitHub's emoji CDN directly (no API call needed)
+    const flagUrl = `https://github.githubassets.com/images/icons/emoji/unicode/1f1${getRegionalIndicator(countryCode[0])}-1f1${getRegionalIndicator(countryCode[1])}.png`;
+    
+    return `<img src="${flagUrl}" alt="${nationality} flag" style="width: 20px; height: 20px; vertical-align: middle; display: inline-block;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display:none;">${getUnicodeFlagEmoji(countryCode)}</span>`;
+}
+
+/**
+ * Convert country code letter to regional indicator hex
+ */
+function getRegionalIndicator(letter) {
+    // Regional indicator symbols start at U+1F1E6 (A) through U+1F1FF (Z)
+    // a = 97 in ASCII, A would be 65, so we normalize to lowercase
+    const code = letter.toLowerCase().charCodeAt(0) - 97 + 0xe6;
+    return code.toString(16);
+}
+
+/**
+ * Get Unicode flag emoji as fallback
+ */
+function getUnicodeFlagEmoji(countryCode) {
+    // Convert country code to Unicode flag emoji
+    // e.g., 'us' -> U+1F1FA U+1F1F8 -> 🇺🇸
+    const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 0x1F1E6 - 65 + char.charCodeAt(0));
+    
+    return String.fromCodePoint(...codePoints);
 }
 
 // ============================================
@@ -101,12 +135,25 @@ async function loadDriverData(driverId) {
     const seasonEl = document.getElementById('seasonHistory');
     const raceResultsEl = document.getElementById('raceResults');
     
+    console.log('Loading driver data for:', driverId);
+    console.log('Elements found:', {
+        profileEl: !!profileEl,
+        statsEl: !!statsEl,
+        teamsEl: !!teamsEl,
+        seasonEl: !!seasonEl,
+        raceResultsEl: !!raceResultsEl
+    });
+    
     try {
         // Load driver basic info and stats in parallel
+        console.log('Fetching driver data and stats...');
         const [driverData, statsData] = await Promise.all([
             getDriver(driverId),
             getDriverStats(driverId)
         ]);
+        
+        console.log('Driver data received:', driverData);
+        console.log('Stats data received:', statsData);
         
         // Extract driver from response
         const driver = driverData.MRData?.DriverTable?.Drivers?.[0];
@@ -115,15 +162,29 @@ async function loadDriverData(driverId) {
             throw new Error('Driver not found');
         }
         
+        console.log('Driver extracted:', driver);
+        
         // Render components
+        console.log('Rendering driver profile...');
         renderDriverProfile(driver, profileEl);
+        
+        console.log('Rendering career stats...');
         renderCareerStats(statsData, statsEl);
-        await renderTeams(statsData.statistics?.teams || [], teamsEl);
+        
+        console.log('Rendering teams...');
+        await renderTeams(statsData, teamsEl, driverId);
+        
+        console.log('Loading season history...');
         await loadSeasonHistory(driverId, seasonEl);
+        
+        console.log('Loading race results...');
         await loadRaceResults(driverId, raceResultsEl);
+        
+        console.log('All data loaded successfully!');
         
     } catch (error) {
         console.error('Error loading driver data:', error);
+        console.error('Error stack:', error.stack);
         showError(profileEl, 'Error loading driver data', error.message);
         if (statsEl) statsEl.innerHTML = '';
         if (teamsEl) teamsEl.innerHTML = '';
@@ -232,6 +293,112 @@ function renderCareerStats(statsData, container) {
 }
 
 /**
+ * Render teams section with years calculated from race data
+ */
+async function renderTeams(statsData, container, driverId) {
+    if (!container) return;
+    
+    showLoading(container, 'Loading teams...');
+    
+    const teams = statsData.statistics?.teams || [];
+    
+    if (!teams || teams.length === 0) {
+        container.innerHTML = `
+            <div class="note-message">
+                No team information available for this driver.
+            </div>
+        `;
+        return;
+    }
+    
+    try {
+        // Fetch all season data to calculate years per team
+        const maxYear = 2024;
+        const promises = [];
+        
+        for (let year = 1984; year <= maxYear; year++) {
+            promises.push(
+                fetch(`/api/drivers/${driverId}/seasons/${year}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const races = data.MRData?.RaceTable?.Races || [];
+                        if (races.length > 0) {
+                            // Get unique teams for this year
+                            const teamsInYear = new Set();
+                            races.forEach(race => {
+                                const teamName = race.Results?.[0]?.Constructor?.name;
+                                if (teamName) {
+                                    teamsInYear.add(teamName);
+                                }
+                            });
+                            return { year, teams: Array.from(teamsInYear) };
+                        }
+                        return null;
+                    })
+                    .catch(() => null)
+            );
+        }
+        
+        const results = await Promise.all(promises);
+        const validSeasons = results.filter(s => s !== null);
+        
+        // Build team-to-years map
+        const teamYears = {};
+        validSeasons.forEach(season => {
+            season.teams.forEach(teamName => {
+                if (!teamYears[teamName]) {
+                    teamYears[teamName] = [];
+                }
+                teamYears[teamName].push(season.year);
+            });
+        });
+        
+        // Calculate year ranges for each team
+        const teamData = Object.keys(teamYears).map(teamName => {
+            const years = teamYears[teamName].sort((a, b) => a - b);
+            const firstYear = years[0];
+            const lastYear = years[years.length - 1];
+            const totalRaces = years.length; // Approximation based on seasons
+            
+            return {
+                name: teamName,
+                startYear: firstYear,
+                endYear: lastYear,
+                years: years,
+                displayYears: firstYear === lastYear ? `${firstYear}` : `${firstYear}-${lastYear}`
+            };
+        });
+        
+        // Sort by most recent first
+        teamData.sort((a, b) => b.endYear - a.endYear);
+        
+        container.innerHTML = `
+            <div class="teams-grid">
+                ${teamData.map(team => `
+                    <div class="team-card">
+                        <div class="team-name">${escapeHtml(team.name)}</div>
+                        <div class="team-years">${team.displayYears}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error loading team years:', error);
+        // Fallback to simple display
+        container.innerHTML = `
+            <div class="teams-grid">
+                ${teams.map(teamName => `
+                    <div class="team-card">
+                        <div class="team-name">${escapeHtml(teamName)}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+}
+
+/**
  * Load and render season history
  */
 async function loadSeasonHistory(driverId, container) {
@@ -241,16 +408,35 @@ async function loadSeasonHistory(driverId, container) {
     
     try {
         // Try to fetch results from available seasons (1984-2024)
-        const currentYear = new Date().getFullYear();
+        const maxYear = 2024; // Database has data through 2024
         const promises = [];
         
-        for (let year = 1984; year <= currentYear; year++) {
+        for (let year = 1984; year <= maxYear; year++) {
             promises.push(
                 fetch(`/api/drivers/${driverId}/seasons/${year}`)
                     .then(res => res.json())
                     .then(data => {
-                        if (data.results && data.results.length > 0) {
-                            return { year, results: data.results };
+                        const races = data.MRData?.RaceTable?.Races || [];
+                        if (races.length > 0) {
+                            // Extract results from each race
+                            const results = races.map(race => {
+                                const result = race.Results?.[0]; // Driver's result is first in array
+                                if (!result) return null;
+                                
+                                return {
+                                    raceName: race.raceName,
+                                    round: race.round,
+                                    date: race.date,
+                                    position: result.position,
+                                    points: result.points,
+                                    grid: result.grid,
+                                    Constructor: result.Constructor
+                                };
+                            }).filter(r => r !== null);
+                            
+                            if (results.length > 0) {
+                                return { year, results };
+                            }
                         }
                         return null;
                     })
@@ -349,16 +535,34 @@ async function loadRaceResults(driverId, container) {
     
     try {
         // Try to fetch results from available seasons (1984-2024)
-        const currentYear = new Date().getFullYear();
+        const maxYear = 2024; // Database has data through 2024
         const promises = [];
         
-        for (let year = 1984; year <= currentYear; year++) {
+        for (let year = 1984; year <= maxYear; year++) {
             promises.push(
                 fetch(`/api/drivers/${driverId}/seasons/${year}`)
                     .then(res => res.json())
                     .then(data => {
-                        if (data.results && data.results.length > 0) {
-                            return data.results.map(r => ({ ...r, year }));
+                        const races = data.MRData?.RaceTable?.Races || [];
+                        if (races.length > 0) {
+                            // Extract results from each race
+                            const results = races.map(race => {
+                                const result = race.Results?.[0]; // Driver's result is first in array
+                                if (!result) return null;
+                                
+                                return {
+                                    year: year,
+                                    raceName: race.raceName,
+                                    round: race.round,
+                                    date: race.date,
+                                    position: result.position,
+                                    points: result.points,
+                                    grid: result.grid,
+                                    Constructor: result.Constructor
+                                };
+                            }).filter(r => r !== null);
+                            
+                            return results;
                         }
                         return [];
                     })
