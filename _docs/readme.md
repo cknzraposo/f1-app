@@ -19,6 +19,12 @@ The main data source is https://api.jolpi.ca/ergast/ - which generates a set of 
 ### Installation
 
 ```bash
+# Create a virtual environment
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -26,6 +32,9 @@ pip install -r requirements.txt
 ### Running the API
 
 ```bash
+# Activate the virtual environment (if not already active)
+source venv/bin/activate
+
 # Start the development server
 uvicorn app.api_server:app --reload --host 0.0.0.0 --port 8000
 
