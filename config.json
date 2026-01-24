@@ -8,10 +8,10 @@
     },
     "azure_openai": {
       "enabled": false,
-      "endpoint": "https://bisho-mgfwbhg9-eastus2.openai.azure.com/",
-      "api_key": "9JBB948qBpImtXM0iyb5X2FSVGXRjL1Ta4NbqMghP1gFDc7duiBuJQQJ99BJACHYHv6XJ3w3AAAAACOGFiOK",
+      "endpoint": "https://URL.openai.azure.com/",
+      "api_key": "KEY_HERE",
       "api_version": "2024-12-01-preview",
-      "deployment_name": "rv-ai-model-router"
+      "deployment_name": "ai-model-router"
     }
   },
   "app": {
