@@ -1,10 +1,12 @@
 # F1 Data API 🏎️
 
-A lightweight, blazingly fast REST API for querying Formula 1 historical data (1984-2024). Built with FastAPI using a **keyword-first, LLM-optional** architecture for maximum speed and reliability.
+A lightweight, localised fast REST API for querying Formula 1 historical data (1984-2024). Built with FastAPI using a **keyword-first, LLM-optional** architecture for maximum speed and reliability.
 
 ## Built with Github Speckit
 
-This project demonstrates how the F1 Data API was built using GitHub Copilot using [Github Speckit]([Github Speckit](https://github.com/github/spec-kit)) and provides step-by-step instructions for setting up the project on Windows Subsystem for Linux (WSL). Perfect for developers learning GitHub Copilot's capabilities.
+This project demonstrates how the F1 Data API was built using GitHub Copilot using [Github Speckit][Github Speckit](https://github.com/github/spec-kit) and provides step-by-step instructions for setting up the project on Windows Subsystem for Linux (WSL). 
+
+This is meant as a demo for developers learning GitHub Copilot's capabilities.
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-009688.svg)](https://fastapi.tiangolo.com)
@@ -15,8 +17,8 @@ This project demonstrates how the F1 Data API was built using GitHub Copilot usi
 - 🚀 **Zero Database Dependency** - All data served from JSON files with intelligent caching
 - ⚡ **Blazingly Fast** - 1-5ms response times for keyword queries
 - 🎯 **Keyword-First Processing** - 90%+ of queries handled without AI/LLM
-- 🤖 **Optional LLM Integration** - Fallback to Ollama/Azure OpenAI for complex queries
-- 📊 **Comprehensive Data** - 874 drivers, 211 constructors, 40 years of F1 history
+- 🤖 **Optional LLM Integration** - Fallback to Ollama (local)/Azure OpenAI for complex queries
+- 📊 **Comprehensive Data** - 874 drivers, 211 constructors, 40 years of F1 history (sourced from Jolpica F1 stats)
 - 🌐 **Web Interface** - Simple HTML/JS chat interface, no build tools needed
 - 📝 **Auto-Generated Docs** - Interactive Swagger UI at `/docs`
 - 🔄 **CORS Enabled** - Ready for web frontend integration
@@ -77,6 +79,13 @@ curl http://localhost:8000/api/constructors/red_bull/stats | jq
 # Get 2023 championship standings
 curl http://localhost:8000/api/seasons/2023/standings | jq
 ```
+
+## Screenshots
+
+![F1 Stats Landing](screenshots/f1-stats-landing.png "F1 Landing Interface")
+
+![F1 Stats Drivers](screenshots/f1-stats-drivers.png "F1 Search Driver Stats")
+
 
 ## 📖 Documentation
 
