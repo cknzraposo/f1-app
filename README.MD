@@ -86,6 +86,8 @@ curl http://localhost:8000/api/seasons/2023/standings | jq
 
 ![F1 Stats Drivers](screenshots/f1-stats-drivers.png "F1 Search Driver Stats")
 
+![F1 Stats Drivers](screenshots/f1-stats-seasons.png "F1 Search Season Stats")
+
 
 ## 📖 Documentation
 
@@ -172,6 +174,7 @@ This application uses Formula 1 data from the [Ergast Developer API](https://api
 
 ## 🤝 Contributing
 
+Note: This is for demo / learning purposes ONLY. Not a supported project.
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 1. Fork the repository
@@ -219,7 +222,7 @@ SOFTWARE.
 - [Ergast Developer API](https://api.jolpi.ca/ergast/) - F1 data source
 - [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework
 - [Tailwind CSS](https://tailwindcss.com/) - UI styling
-- All F1 fans and contributors
+- All F1 fans and contributors + GitHub Copilot
 
 ## 📞 Support
 
