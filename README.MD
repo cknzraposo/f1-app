@@ -226,8 +226,8 @@ SOFTWARE.
 
 ## 📞 Support
 
-For questions, issues, or feature requests, please [open an issue](https://github.com/cknzraposo/f1-app/issues) on GitHub.
+For questions, issues, or feature requests, please [open an issue](https://github.com/cknzraposo/f1-app/issues) on GitHub. Note: This is for demo / learning purposes ONLY. Not a supported project.
 
 ---
 
-**Built with ❤️ using FastAPI and GitHub Copilot**
+**Built with ❤️ for learners to use WSL / Python / VSCode + GitHub Copilot**
