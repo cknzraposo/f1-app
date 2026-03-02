@@ -8,7 +8,11 @@
     },
     "chat.tools.terminal.autoApprove": {
         ".specify/scripts/bash/": true,
-        ".specify/scripts/powershell/": true
+        ".specify/scripts/powershell/": true,
+        "/^python3 - <<'PY'\nimport json\nfrom pathlib import Path\np=Path\\('/home/cknz74/f1-app/f1resultsall/all_results\\.json'\\)\nif not p\\.exists\\(\\):\n    print\\('missing all_results\\.json'\\)\n    raise SystemExit\nwith p\\.open\\(\\) as f:\n    data=json\\.load\\(f\\)\n# support likely Ergast MRData->RaceTable->Races\nraces=\\[\\]\nif isinstance\\(data, dict\\):\n    races = data\\.get\\('MRData',\\{\\}\\)\\.get\\('RaceTable',\\{\\}\\)\\.get\\('Races',\\[\\]\\) if 'MRData' in data else data\\.get\\('Races',\\[\\]\\)\nif not isinstance\\(races, list\\):\n    races=\\[\\]\nr2025=\\[r for r in races if str\\(r\\.get\\('season'\\)\\)=='2025'\\]\nrounds=sorted\\(\\{int\\(r\\.get\\('round'\\)\\) for r in r2025 if str\\(r\\.get\\('round',''\\)\\)\\.isdigit\\(\\)\\}\\)\nprint\\('total_2025_races',len\\(r2025\\)\\)\nprint\\('unique_2025_rounds',len\\(rounds\\)\\)\nprint\\('min_round',rounds\\[0\\] if rounds else None\\)\nprint\\('max_round',rounds\\[-1\\] if rounds else None\\)\nprint\\('missing_rounds', \\[i for i in range\\(1,\\(rounds\\[-1\\] if rounds else 0\\)\\+1\\) if i not in set\\(rounds\\)\\]\\)\nprint\\('last_race', r2025\\[-1\\]\\.get\\('raceName'\\) if r2025 else None\\)\nPY$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }
 
