@@ -95,6 +95,9 @@ curl http://localhost:8000/api/seasons/2023/standings | jq
 - **[GitHub Copilot Learning Guide](_docs/github-copilot-learning-guide.md)** - How this app was built with Copilot + WSL setup guide
 - **[Architecture Deep Dive](_docs/ARCHITECTURE.md)** - System design and architecture details
 - **[Keyword-First Architecture](_docs/keyword-first-architecture.md)** - Why we prioritize keywords over LLMs
+- **[Testing Lessons](_docs/testing-lessons.md)** - Reproducing and understanding common test failures
+- **[Student Guide](_docs/student-guide.md)** - Step-by-step "break it, fix it" debugging lessons for learners
+- **[Tutor Guide](_docs/tutor-guide.md)** - Session plans, answer notes, and assessment ideas for instructors
 
 ## 🏗️ Architecture
 
@@ -159,14 +162,17 @@ See [API Documentation](_docs/readme.md) for complete endpoint reference.
 
 ```bash
 # Run all tests
-pytest
+python -m pytest -q tests
 
-# Run with coverage
-pytest --cov=app tests/
+# Optional: install pytest-cov first
+python -m pip install pytest-cov
+python -m pytest --cov=app tests/
 
-# Run specific test file
-pytest tests/test_api.py -v
+# Run a focused test file
+python -m pytest -q tests/unit/test_constructor_stats.py
 ```
+
+See [Testing Lessons](_docs/testing-lessons.md) for concrete examples of past failures, regression-test commands, and notes on the checked-in sample data.
 
 ## 🌐 Data Source
 

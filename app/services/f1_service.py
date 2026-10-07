@@ -4,7 +4,7 @@ F1 Business Logic Service Layer
 Provides independently testable business logic for F1 data processing.
 All methods are static and have no HTTP dependencies, making them easy to test.
 """
-from typing import Dict, Any, Optional, List, Set
+from typing import Dict, Any, Optional, List
 from functools import lru_cache
 from ..json_loader import load_drivers, load_constructors, load_season_results, get_available_seasons
 
@@ -292,6 +292,163 @@ class F1Service:
         }
     
     @staticmethod
+    def _calculate_constructor_statistics(
+        constructor_id: str,
+        season_data_list: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Calculate constructor statistics from already-loaded season data."""
+        stats: Dict[str, Any] = {
+            "constructorId": constructor_id,
+            "totalRaces": 0,
+            "totalWins": 0,
+            "totalPodiums": 0,
+            "totalPoints": 0.0,
+            "totalPoles": 0,
+            "totalFastestLaps": 0,
+            "totalChampionships": 0,
+            "drivers": set(),
+            "seasons": [],
+            "firstRace": None,
+            "lastRace": None,
+            "bestSeasonPosition": None,
+            "bestSeasonYear": None
+        }
+
+        for season_data in season_data_list:
+            mr_data = season_data.get("MRData", {})
+            race_table = mr_data.get("RaceTable", {})
+            races = race_table.get("Races", [])
+            season_value = race_table.get("season")
+            if season_value is None and races:
+                season_value = races[0].get("season")
+            season_year = None
+            if season_value is not None:
+                try:
+                    season_year = int(season_value)
+                except (TypeError, ValueError):
+                    pass
+
+            year_races = 0
+            year_wins = 0
+            year_podiums = 0
+            year_points = 0.0
+
+            for race in races:
+                constructor_results = [
+                    result for result in race.get("Results", [])
+                    if result.get("Constructor", {}).get("constructorId") == constructor_id
+                ]
+                if not constructor_results:
+                    continue
+
+                year_races += 1
+                stats["totalRaces"] += 1
+
+                race_date = race.get("date", "")
+                if race_date and (
+                    not stats["firstRace"] or race_date < stats["firstRace"]["date"]
+                ):
+                    stats["firstRace"] = {
+                        "date": race_date,
+                        "raceName": race.get("raceName"),
+                        "season": season_year
+                    }
+                if race_date and (
+                    not stats["lastRace"] or race_date > stats["lastRace"]["date"]
+                ):
+                    stats["lastRace"] = {
+                        "date": race_date,
+                        "raceName": race.get("raceName"),
+                        "season": season_year
+                    }
+
+                for result in constructor_results:
+                    try:
+                        position = int(result.get("position"))
+                    except (TypeError, ValueError):
+                        position = None
+
+                    if position == 1:
+                        year_wins += 1
+                        stats["totalWins"] += 1
+                    if position is not None and 1 <= position <= 3:
+                        year_podiums += 1
+                        stats["totalPodiums"] += 1
+
+                    fastest_lap = result.get("FastestLap", {})
+                    if fastest_lap.get("rank") == "1":
+                        stats["totalFastestLaps"] += 1
+
+                    try:
+                        points = float(result.get("points", 0))
+                    except (TypeError, ValueError):
+                        points = 0.0
+                    stats["totalPoints"] += points
+                    year_points += points
+
+                    driver_id = result.get("Driver", {}).get("driverId")
+                    if driver_id:
+                        stats["drivers"].add(driver_id)
+
+                qualifying_results = race.get("QualifyingResults")
+                if qualifying_results is not None:
+                    has_pole = any(
+                        result.get("Constructor", {}).get("constructorId") == constructor_id
+                        and str(result.get("position")) == "1"
+                        for result in qualifying_results
+                    )
+                else:
+                    has_pole = any(
+                        result.get("Constructor", {}).get("constructorId") == constructor_id
+                        and str(result.get("grid")) == "1"
+                        for result in constructor_results
+                    )
+                if has_pole:
+                    stats["totalPoles"] += 1
+
+            if year_races:
+                stats["seasons"].append({
+                    "season": season_year,
+                    "races": year_races,
+                    "wins": year_wins,
+                    "podiums": year_podiums,
+                    "points": year_points
+                })
+
+            standings_lists = mr_data.get("StandingsTable", {}).get("StandingsLists", [])
+            if standings_lists:
+                final_standings = standings_lists[-1]
+                if season_year is None:
+                    standings_year = final_standings.get("season")
+                    if standings_year is not None:
+                        try:
+                            season_year = int(standings_year)
+                        except (TypeError, ValueError):
+                            pass
+
+                for standing in final_standings.get("ConstructorStandings", []):
+                    if standing.get("Constructor", {}).get("constructorId") != constructor_id:
+                        continue
+
+                    try:
+                        position = int(standing.get("position"))
+                    except (TypeError, ValueError):
+                        break
+
+                    if (
+                        stats["bestSeasonPosition"] is None
+                        or position < stats["bestSeasonPosition"]
+                    ):
+                        stats["bestSeasonPosition"] = position
+                        stats["bestSeasonYear"] = season_year
+                    if position == 1:
+                        stats["totalChampionships"] += 1
+                    break
+
+        stats["drivers"] = sorted(stats["drivers"])
+        return stats
+
+    @staticmethod
     @lru_cache(maxsize=128)
     def get_constructor_statistics(
         constructor_id: str,
@@ -333,140 +490,14 @@ class F1Service:
         if end_year:
             available_seasons = [y for y in available_seasons if y <= end_year]
         
-        stats = {
-            "constructorId": constructor_id,
-            "totalRaces": 0,
-            "totalWins": 0,
-            "totalPodiums": 0,
-            "totalPoints": 0.0,
-            "totalPoles": 0,
-            "totalFastestLaps": 0,
-            "totalChampionships": 0,
-            "drivers": set(),
-            "seasons": [],
-            "firstRace": None,
-            "lastRace": None,
-            "bestSeasonPosition": None,
-            "bestSeasonYear": None
-        }
-        
+        season_data_list: List[Dict[str, Any]] = []
         for year in available_seasons:
             try:
-                season_data = load_season_results(year)
-                races = season_data.get("MRData", {}).get("RaceTable", {}).get("Races", [])
-                
-                year_races: Set[str] = set()
-                year_wins = 0
-                year_podiums = 0
-                year_points = 0.0
-                
-                for race in races:
-                    results = race.get("Results", [])
-                    race_participated = False
-                    
-                    for result in results:
-                        if result.get("Constructor", {}).get("constructorId") == constructor_id:
-                            if not race_participated:
-                                race_participated = True
-                                year_races.add(race.get("round"))
-                                stats["totalRaces"] += 1
-                                
-                                # Track first and last race
-                                race_date = race.get("date", "")
-                                if not stats["firstRace"] or race_date < stats["firstRace"]["date"]:
-                                    stats["firstRace"] = {
-                                        "date": race_date,
-                                        "raceName": race.get("raceName"),
-                                        "season": year
-                                    }
-                                if not stats["lastRace"] or race_date > stats["lastRace"]["date"]:
-                                    stats["lastRace"] = {
-                                        "date": race_date,
-                                        "raceName": race.get("raceName"),
-                                        "season": year
-                                    }
-                            
-                            # Position stats
-                            position = result.get("position")
-                            if position:
-                                try:
-                                    pos_int = int(position)
-                                    if pos_int == 1:
-                                        year_wins += 1
-                                        stats["totalWins"] += 1
-                                    if pos_int <= 3:
-                                        year_podiums += 1
-                                        stats["totalPodiums"] += 1
-                                except (ValueError, TypeError):
-                                    pass
-                            
-                            # Grid position (pole) - check qualifying results
-                            grid = result.get("grid")
-                            if grid:
-                                try:
-                                    if int(grid) == 1:
-                                        stats["totalPoles"] += 1
-                                except (ValueError, TypeError):
-                                    pass
-                            
-                            # Fastest lap
-                            fastest_lap = result.get("FastestLap", {})
-                            if fastest_lap.get("rank") == "1":
-                                stats["totalFastestLaps"] += 1
-                            
-                            # Points
-                            points = float(result.get("points", 0))
-                            stats["totalPoints"] += points
-                            year_points += points
-                            
-                            # Drivers
-                            driver_id = result.get("Driver", {}).get("driverId")
-                            if driver_id:
-                                stats["drivers"].add(driver_id)
-                
-                if len(year_races) > 0:
-                    stats["seasons"].append({
-                        "season": year,
-                        "races": len(year_races),
-                        "wins": year_wins,
-                        "podiums": year_podiums,
-                        "points": year_points
-                    })
-            
+                season_data_list.append(load_season_results(year))
             except FileNotFoundError:
                 continue
-        
-        # Calculate championship wins from standings data
-        for year in available_seasons:
-            try:
-                season_data = load_season_results(year)
-                standings_table = season_data.get("MRData", {}).get("StandingsTable", {})
-                standings_lists = standings_table.get("StandingsLists", [])
-                
-                if standings_lists:
-                    # Get final standings (last element)
-                    final_standings = standings_lists[-1]
-                    constructor_standings = final_standings.get("ConstructorStandings", [])
-                    
-                    for standing in constructor_standings:
-                        if standing.get("Constructor", {}).get("constructorId") == constructor_id:
-                            position = standing.get("position")
-                            try:
-                                pos_int = int(position)
-                                
-                                # Track best season position
-                                if stats["bestSeasonPosition"] is None or pos_int < stats["bestSeasonPosition"]:
-                                    stats["bestSeasonPosition"] = pos_int
-                                    stats["bestSeasonYear"] = year
-                                
-                                # Championship win
-                                if pos_int == 1:
-                                    stats["totalChampionships"] += 1
-                            except (ValueError, TypeError):
-                                pass
-                            break
-            except FileNotFoundError:
-                continue
+
+        stats = F1Service._calculate_constructor_statistics(constructor_id, season_data_list)
         
         # If constructor has no race data at all, raise error
         if stats["totalRaces"] == 0 and not constructor_info:

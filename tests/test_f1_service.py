@@ -137,11 +137,11 @@ class TestConstructorStatistics:
         # Verify statistics fields
         stats = result["statistics"]
         assert "totalRaces" in stats
-        assert "wins" in stats
-        assert "podiums" in stats
+        assert "totalWins" in stats
+        assert "totalPodiums" in stats
         assert "totalPoints" in stats
-        assert "polePositions" in stats
-        assert "fastestLaps" in stats
+        assert "totalPoles" in stats
+        assert "totalFastestLaps" in stats
         assert "drivers" in stats
         assert "seasons" in stats
         

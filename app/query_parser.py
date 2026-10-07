@@ -91,34 +91,34 @@ class QueryParser:
         query_lower = query.lower().strip()
         
         # Try different patterns in order of specificity
+
+        # 1. Race winners (e.g., "who won the most races in 2023")
+        result = self._parse_race_winners_query(query_lower)
+        if result:
+            return result
         
-        # 1. Championship winner (e.g., "who won the 2010 championship")
+        # 2. Championship winner (e.g., "who won the 2010 championship")
         result = self._parse_championship_query(query_lower)
         if result:
             return result
         
-        # 2. Driver statistics (e.g., "how many wins does hamilton have")
+        # 3. Driver statistics (e.g., "how many wins does hamilton have")
         result = self._parse_driver_stats_query(query_lower)
         if result:
             return result
         
-        # 3. Team/Constructor info (e.g., "tell me about red bull")
+        # 4. Team/Constructor info (e.g., "tell me about red bull")
         result = self._parse_constructor_query(query_lower)
         if result:
             return result
         
-        # 4. Season standings (e.g., "2023 standings")
+        # 5. Season standings (e.g., "2023 standings")
         result = self._parse_standings_query(query_lower)
         if result:
             return result
         
-        # 5. Driver comparison (e.g., "compare hamilton and verstappen")
+        # 6. Driver comparison (e.g., "compare hamilton and verstappen")
         result = self._parse_comparison_query(query_lower)
-        if result:
-            return result
-        
-        # 6. Race winners in a season (e.g., "who won the most races in 2023")
-        result = self._parse_race_winners_query(query_lower)
         if result:
             return result
         

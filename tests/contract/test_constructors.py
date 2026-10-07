@@ -83,6 +83,7 @@ class TestConstructorEndpointsContract:
         response = client.get("/api/constructors/ferrari/stats")
         stats = response.json()
         
+        stats = stats["statistics"]
         required_metrics = ["totalChampionships", "totalWins", "totalPodiums", "totalPoles"]
         for metric in required_metrics:
             assert metric in stats, f"Stats missing required metric: {metric}"

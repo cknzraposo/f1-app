@@ -175,7 +175,9 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
         
         # Infer data type from endpoint pattern since QueryParser returns generic "api_call"
         data_type = 'unknown'
-        if '/standings' in endpoint:
+        if '/winners' in endpoint:
+            data_type = 'season_winners'
+        elif '/standings' in endpoint:
             data_type = 'championship_standings'
         elif '/stats' in endpoint and '/drivers/' in endpoint:
             data_type = 'driver_stats'
@@ -183,8 +185,6 @@ async def unified_query(request: QueryRequest) -> Dict[str, Any]:
             data_type = 'constructor_stats'
         elif 'head-to-head' in endpoint:
             data_type = 'head_to_head'
-        elif '/winners' in endpoint:
-            data_type = 'season_winners'
         elif '/search' in endpoint:
             data_type = 'driver_search'
         

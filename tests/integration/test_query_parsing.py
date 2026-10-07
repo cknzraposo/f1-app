@@ -43,9 +43,10 @@ class TestQueryParsingWorkflow:
         
         # Should route to driver stats
         assert data["dataType"] == "driver_stats"
-        assert data["data"]["totalWins"] > 0
-        assert "totalPodiums" in data["data"]
-        assert "totalRaces" in data["data"]
+        stats = data["data"]["statistics"]
+        assert stats["wins"] > 0
+        assert "podiums" in stats
+        assert "totalRaces" in stats
     
     def test_standings_query_workflow(self, client: TestClient):
         """Standings query extracts year and fetches standings"""
@@ -83,7 +84,7 @@ class TestYearExtraction:
         queries = [
             ("2023 championship", 2023),
             ("who won in 2010", 2010),
-            ("1984 season", 1984),
+            ("1984 standings", 1984),
             ("2024 standings", 2024)
         ]
         
@@ -91,8 +92,7 @@ class TestYearExtraction:
             response = client.post("/api/query", json={"query": query})
             if response.status_code == 200:
                 data = response.json()
-                # Year should appear in the data somewhere
-                assert expected_year in str(data["data"])
+                assert data["data"]["season"] == expected_year
     
     def test_year_range_validation(self, client: TestClient):
         """Years outside 1984-2024 are rejected"""
@@ -114,7 +114,7 @@ class TestYearExtraction:
         if response.status_code == 200:
             data = response.json()
             # Should extract 2023 as primary year
-            assert 2023 in str(data["data"])
+            assert data["data"]["season"] == 2023
 
 
 class TestDriverNameExtraction:
@@ -279,7 +279,7 @@ class TestQueryAmbiguityHandling:
         # Should prioritize championship standings for 2023
         if response.status_code == 200:
             data = response.json()
-            assert 2023 in str(data["data"])
+            assert data["data"]["season"] == 2023
     
     def test_incomplete_query_returns_error(self, client: TestClient):
         """Incomplete queries return helpful error"""
