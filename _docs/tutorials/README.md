@@ -12,6 +12,9 @@ Spec Kit is a workflow toolkit used with Copilot, not a competing AI model.
 Neither path is assumed to win. A small repair and a cross-layer feature let you
 investigate whether additional structure is worth its cost.
 
+For the website version, see the [tutorial landing page](./index.md).
+Repository owners can follow the [GitHub Pages publishing walkthrough](./publishing.md).
+
 ## Outcomes and route
 
 By the end, you should be able to:

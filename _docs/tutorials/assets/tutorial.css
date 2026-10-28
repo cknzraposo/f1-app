@@ -1,0 +1,110 @@
+:root {
+    --workshop-accent: #0f766e;
+    --workshop-ink: #14332f;
+    --workshop-surface: #eef8f5;
+    --workshop-border: #b7d8d0;
+}
+
+.navbar.bg-primary {
+    background-image: none;
+    background-color: #14332f !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: #fff;
+}
+
+.tutorial-hero {
+    margin: 0 0 2rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--workshop-border);
+    border-radius: 1rem;
+    background: var(--workshop-surface);
+    color: var(--workshop-ink);
+}
+
+.tutorial-hero h1 {
+    max-width: 16ch;
+    margin: 0.6rem 0 1rem;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 750;
+    line-height: 1.1;
+}
+
+.eyebrow {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tutorial-hero p > a {
+    display: inline-block;
+    margin: 0.5rem 0.5rem 0.5rem 0;
+    padding: 0.7rem 1rem;
+    border-radius: 0.4rem;
+    background: var(--workshop-accent);
+    color: #fff;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.tutorial-hero p > a:hover {
+    background: #115e59;
+    text-decoration: underline;
+}
+
+.path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0 2rem;
+}
+
+.path-card {
+    padding: 1.5rem;
+    border: 1px solid var(--workshop-border);
+    border-radius: 0.75rem;
+}
+
+.path-card h3 {
+    margin-top: 0;
+}
+
+.path-card a {
+    font-weight: 700;
+}
+
+pre {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid #b45309;
+    outline-offset: 3px;
+}
+
+html {
+    scroll-padding-top: 5rem;
+}
+
+@media (max-width: 767px) {
+    .tutorial-hero {
+        padding: 1.25rem;
+    }
+
+    .tutorial-hero p > a {
+        display: block;
+        margin-right: 0;
+        text-align: center;
+    }
+}

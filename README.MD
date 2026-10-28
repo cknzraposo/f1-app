@@ -13,6 +13,23 @@ Use the same F1 application to compare **Copilot-native development** with **Cop
 
 **[Start the tutorial](_docs/tutorials/README.md)** for shared setup, a paired debugging lab, a cross-layer feature lab, acceptance checks, and a judgement-based assessment. The original Spec Kit walkthrough remains available as historical material.
 
+### Publish the tutorial website
+
+The repository includes a static landing page, lesson navigation, search, and a
+GitHub Pages workflow. The existing Markdown guides remain the source of truth.
+
+```bash
+python -m pip install -r requirements-pages.txt
+python -m mkdocs serve --dev-addr 127.0.0.1:8001
+```
+
+Open the address printed by MkDocs. For publishing, follow the
+**[GitHub Pages walkthrough](_docs/tutorials/publishing.md)**: push the changes,
+select **Settings → Pages → Source: GitHub Actions**, and run the publishing
+workflow. The expected address is `https://cknzraposo.github.io/f1-app/` after a
+successful deployment; this is not a claim that the site is already live.
+GitHub Pages hosts the tutorial, not the FastAPI server.
+
 Copilot assists development; the application's optional Ollama/Azure integration is a separate concern. Neither runtime LLM is required for these lessons. GitHub Copilot access is required for the AI-assisted portions.
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
