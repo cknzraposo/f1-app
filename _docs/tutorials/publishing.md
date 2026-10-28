@@ -13,6 +13,8 @@ copy of each guide to maintain.
 - Source: [tutorial landing page](./index.md) and the existing lesson Markdown.
 - Configuration: [mkdocs.yml](../../mkdocs.yml).
 - Styling: [tutorial.css](./assets/tutorial.css).
+- Layout: [custom motorsport theme](../../theme/main.html), with responsive
+  course navigation, light/dark mode, local search, and copyable code examples.
 - Deployment: [Pages workflow](../../.github/workflows/pages.yml).
 - Optional build dependencies: [requirements-pages.txt](../../requirements-pages.txt).
 
@@ -126,7 +128,10 @@ private Pages website. Review the rendered content before publishing it.
 
 ## 7. Maintain the site
 
-Edit the existing tutorial Markdown, not generated HTML. After a successful
+Edit the existing tutorial Markdown, not generated HTML. Layout changes belong
+in `theme/`; visual assets and browser interactions live in `assets/` beside
+the guides. The racing artwork is original SVG, not an official F1/team asset.
+No frontend bundler or external font service is needed. After a successful
 merge to `master`, relevant changes trigger a fresh build and deployment.
 Keep the tested capabilities, dates, and instructor observations up to date.
 

@@ -5,6 +5,10 @@ Use either [the repair brief](./repair-lab.md) or
 [the feature brief](./feature-lab.md); do not change their acceptance criteria.
 Run each exercise in its own worktree and fresh chat.
 
+First choose your [working style](./ai-development.md). "Copilot-native" names
+this lightweight process, not the level of agent autonomy. You can drive each
+step yourself with AI assistance, or delegate bounded execution to an agent.
+
 ## 1. Explore, do not edit
 
 Attach the lab brief and relevant source files, not the entire documentation
@@ -33,7 +37,11 @@ a short plan is enough; a separate generated specification is not mandatory.
 
 ## 3. Implement a bounded change
 
-After approval, switch to an implementation-capable agent if needed:
+For an **AI-assisted run**, request focused suggestions and apply/review changes
+one step at a time; run the commands yourself.
+
+For an **AI-native run**, after approval switch to an implementation-capable
+agent if needed and delegate the bounded task:
 
 > Implement the approved plan. Add your own regression tests, preserve the
 > supplied acceptance checks, and run the narrow checks first. Stop and report

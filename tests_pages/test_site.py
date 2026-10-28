@@ -23,11 +23,14 @@ class PageLinks(HTMLParser):
         super().__init__()
         self.links: list[str] = []
         self.ids: set[str] = set()
+        self.duplicate_ids: set[str] = set()
         self.feed(html)
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
         if identifier := attributes.get("id"):
+            if identifier in self.ids:
+                self.duplicate_ids.add(identifier)
             self.ids.add(identifier)
         key = "href" if tag in {"a", "link"} else "src"
         if target := attributes.get(key):
@@ -128,7 +131,7 @@ class BuiltSiteTests(unittest.TestCase):
 
     def test_landing_and_all_lessons_exist(self):
         for name in [
-            "index", "setup", "copilot-native", "copilot-spec-kit",
+            "index", "wsl-setup", "ai-development", "setup", "copilot-native", "copilot-spec-kit",
             "repair-lab", "feature-lab", "assessment", "publishing",
         ]:
             with self.subTest(page=name):
@@ -177,6 +180,34 @@ class BuiltSiteTests(unittest.TestCase):
         self.assertIn('href="copilot-spec-kit.html"', home)
         self.assertIn("run FastAPI locally", home)
         self.assertTrue((self.site / "search" / "search_index.json").is_file())
+
+    def test_racing_shell_controls_exist_on_every_page(self):
+        controls = {
+            "main-content", "course-menu", "theme-toggle", "lesson-search",
+            "search-title", "mkdocs-search-query", "mkdocs-search-results", "site-status",
+        }
+        for path, parsed in self.pages.items():
+            with self.subTest(page=path.name):
+                self.assertTrue(controls.issubset(parsed.ids))
+                self.assertFalse(parsed.duplicate_ids)
+                html = path.read_text(encoding="utf-8")
+                self.assertIn('data-theme="dark"', html)
+                self.assertIn('aria-label="Search lessons"', html)
+                self.assertIn("assets/tutorial.js", html)
+                self.assertNotIn("bootstrap.bundle.min.js", html)
+
+    def test_original_racing_assets_are_published(self):
+        for name in ["racecar.svg", "favicon.svg", "tutorial.js", "tutorial.css"]:
+            self.assertTrue((self.site / "assets" / name).is_file())
+
+    def test_landing_links_to_environment_and_development_guides(self):
+        links = self.pages[self.site / "index.html"].links
+        self.assertIn("wsl-setup.html", links)
+        self.assertIn("ai-development.html", links)
+
+    def test_theme_changes_trigger_both_workflow_builds(self):
+        workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+        self.assertEqual(workflow.count('- "theme/**"'), 2)
 
 
 if __name__ == "__main__":

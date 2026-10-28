@@ -10,6 +10,7 @@ metrics your account does not expose; do not invent token or cost figures.
 
 | Evidence | Path A: Copilot-native | Path B: Copilot + Spec Kit |
 |----------|------------------------|---------------------------|
+| Working style: AI-assisted or AI-native; delegated scope | | |
 | Baseline commit and exercise checkpoint | | |
 | OS, Python and resolved dependency versions | | |
 | VS Code, harness, model, date, access/policy limits | | |
@@ -42,6 +43,8 @@ Write a short decision record answering:
 4. Which workflow would you choose for a small fix, an uncertain cross-layer
    change, and a team handover? Explain the trade-offs.
 5. What would change your choice? Suggest a hybrid workflow if justified.
+6. Which engineering responsibilities stayed with you even when an agent did
+   the implementation? How did your planning, testing, and review work change?
 
 Submit code diffs, your own tests, execution evidence, relevant plans/specs,
 and the decision record. Redact secrets and personal information from logs;
@@ -65,6 +68,11 @@ the unmet criteria.
 
 Before teaching:
 
+- [ ] Choose whether the session compares working styles or process structure.
+      Keep the other dimension constant; do not assume "Copilot-native" means
+      "AI-native" or that Spec Kit requires agent-led implementation.
+- [ ] Check the [WSL onboarding](./wsl-setup.md) on the learners' Windows setup,
+      including editor connection, interpreter, baseline tests, and local UI.
 - [ ] Publish a clean course revision/tag containing these materials and record
       its full commit. Do not publish completed feature solutions in the starter.
 - [ ] Install requirements in a fresh environment and capture the application
@@ -120,6 +128,6 @@ Keep these outside the initial scored comparison:
 - Investigate hooks or plugins only after checking current availability and
   organizational policy. Keep preview features optional.
 
-Refer to [the dated capability matrix and official sources](./setup.md#capability-and-access-check).
+Refer to [the capability matrix and official sources](./setup.md#capability-and-access-check).
 Small classroom comparisons are observations, not proof that one workflow is
 universally superior.

@@ -5,6 +5,16 @@ macOS, or WSL with Git and Python 3.12+ installed. Native Windows users can use
 PowerShell activation (`.venv\Scripts\Activate.ps1`) and equivalent file moves;
 the worktree and Python commands are otherwise the same.
 
+**New to Windows/WSL?** Follow the [step-by-step WSL onboarding](./wsl-setup.md)
+first. It covers Windows versus Linux commands, VS Code's WSL connection,
+the Python interpreter, Copilot sign-in, and your first running app.
+
+Already cloned the project and installed its dependencies through that guide?
+Skip the installation commands below and continue with the capability check.
+Before comparing workflows, read
+[AI-assisted versus AI-native development](./ai-development.md): working style
+and workflow structure are separate choices.
+
 ## Install and record a baseline
 
 ```bash
@@ -24,13 +34,6 @@ warnings, and operating system. Dependency lower bounds are not a lockfile;
 use the same resolved package versions in both environments. Do not copy
 environment files containing secrets into your submission.
 
-**Verified during tutorial preparation, October 28, 2026:** the starting
-application at `f9df215384eced2077ec16b1de7c46d72ec7a1f8` passed 278 tests on
-Python 3.14.4, with dependency deprecation warnings. That revision predates
-these tutorial additions. It is historical evidence, not the revision students
-should automatically check out. Record the published tutorial revision you
-actually use; do not assume future versions have exactly 278 tests.
-
 Start the app when needed:
 
 ```bash
@@ -39,14 +42,14 @@ uvicorn app.api_server:app --reload --host 127.0.0.1 --port 8000
 
 Open `/docs` and `/static/index.html` at `http://127.0.0.1:8000`.
 Run only one worktree's server on that port at a time; stop it with Ctrl+C.
-The [historical WSL guide](../github-copilot-learning-guide.md#wsl-setup-guide-for-beginners)
-can help with OS setup, but this page is the course dependency source of truth.
+For Windows networking, interpreter selection, or editor setup problems, use
+the [WSL troubleshooting guide](./wsl-setup.md#troubleshooting).
 
 ## Capability and access check
 
-Documentation checked October 28, 2026. Features, names, entitlement, previews,
-and organizational policies change. The following is a course requirement
-matrix, **not a claim that every feature was exercised in this environment**.
+Features, names, access, and organizational policies change. Check the controls
+available in your installed VS Code/Copilot environment before choosing how much
+work to delegate.
 
 | Capability | Course use | Preflight and fallback |
 |------------|------------|------------------------|
@@ -161,7 +164,7 @@ python -m pytest -q tests _docs/tutorials/checks/repair_checks.py _docs/tutorial
 The materials checks validate local tutorial links and prove that the shared
 repair checks detect a simulated championship-first regression, without
 modifying application files. The repair checks must pass on the unbroken
-starter. During preparation this combined command passed **296 checks**.
+starter. Record your own output rather than relying on a fixed test count.
 
 Run the feature contract separately:
 
@@ -169,50 +172,24 @@ Run the feature contract separately:
 python -m pytest -q --tb=short _docs/tutorials/checks/coverage_checks.py
 ```
 
-On the starter, preparation recorded **5 failed, 3 passed**: the four successful
-response cases and integer-year validation fail because the coverage route is
-absent. The three missing-file checks already receive 404. These expected red
-checks must not be added to the starter's default passing application command.
-After a student implements the feature, all eight feature checks must pass.
+On the starter, checks expecting a coverage response and integer-year validation
+fail because the coverage route is absent. Missing-file checks can already
+receive 404. These expected red checks must not be added to the starter's default
+passing application command. After implementing the feature, every feature
+check must pass.
 
 The supplied checks are executable Python files named `*_checks.py`, not
 `test_*.py`, and are selected explicitly. Do not equate repository-level
 validation with the [interactive instructor pilot](./assessment.md#instructor-pilot-checklist).
 
-### Setup troubleshooting and preparation evidence
+### Setup troubleshooting
 
 | Symptom | Action |
 |---------|--------|
-| `venv` fails because `ensurepip` is unavailable | Use an instructor-provided Python installation with venv support, or the pip-managed fallback below |
+| `venv` fails because `ensurepip` is unavailable | Follow the WSL guide to install the matching Ubuntu venv package, or use an instructor-provided Python installation with venv support |
 | `ModuleNotFoundError: httpx` | Activate the intended interpreter and reinstall `requirements.txt`; the dependency is now declared |
 | VS Code finds no tests | Run the explicit `python -m pytest` command from the repository root |
 | Agent terminal cannot start because of sandbox prerequisites | Report the tool limitation; run the same checks through an approved terminal/task runner, without changing file-access policies |
 | Spec Kit workflow is missing | Inspect harness compatibility and customization discovery; use the documented workflow-file fallback and record it |
 | Dependency deprecation warnings | Record them separately from test failures; do not make unrelated upgrades during the comparison |
 | `test_season_data_caching` fails its wall-clock threshold | Record both timings and rerun that test in isolation before rerunning the suite; do not weaken the assertion or mistake this timing check for deterministic cache evidence |
-
-Preparation encountered missing system `ensurepip`. With an existing
-pip-equipped interpreter supporting `pip --python`, an isolated environment can
-still be created and populated without system package changes:
-
-```bash
-# Example for an existing .venv; choose a fresh target.
-.venv/bin/python -m venv --without-pip .venv/tutorial-validation
-.venv/bin/python -m pip --python .venv/tutorial-validation install -r requirements.txt
-.venv/tutorial-validation/bin/python -m pytest -q tests _docs/tutorials/checks/repair_checks.py _docs/tutorials/checks/materials_checks.py
-```
-
-The equivalent pip-managed isolated installation passed all **296 checks**
-during preparation on Python 3.14.4. This verifies installation from the manifest
-on that interpreter, not every supported OS/Python combination. The eight feature
-checks were also exercised successfully against a temporary in-memory test
-implementation; no feature solution was added to the application. Browser
-feature behavior and interactive Copilot/Spec Kit sessions remain instructor
-pilot tasks.
-
-One repeated preparation run hit the existing caching timing assertion
-(`tests/integration/test_season_flow.py`): the second request took about 5.29 ms
-versus 4.36 ms for the first, despite equal successful responses. Keep this
-observation with the baseline evidence rather than reporting every run as
-uniformly green. Timing-sensitive tests can be noisy on shared machines.
-The isolated rerun passed, followed by a full **296-check** passing rerun.

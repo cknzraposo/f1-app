@@ -1,7 +1,12 @@
-# AI-assisted development: choose your workflow
+# AI-assisted and AI-native development: the F1 showcase
 
-Build judgement, not dependence on generated code. Compare two ways of using
-GitHub Copilot on the same FastAPI and vanilla-JavaScript application:
+Go from setting up a development environment to making and reviewing a real
+AI-supported change. Build judgement, not dependence on generated code.
+
+Start with [Windows/WSL onboarding](./wsl-setup.md) if needed, then learn
+[what changes with AI-assisted and AI-native development](./ai-development.md).
+Compare two ways of organizing that work on the same FastAPI and
+vanilla-JavaScript application:
 
 - [Path A: Copilot-native](./copilot-native.md): explore, plan, approve, implement,
   verify.
@@ -11,6 +16,11 @@ GitHub Copilot on the same FastAPI and vanilla-JavaScript application:
 Spec Kit is a workflow toolkit used with Copilot, not a competing AI model.
 Neither path is assumed to win. A small repair and a cross-layer feature let you
 investigate whether additional structure is worth its cost.
+
+**Two separate decisions:** choose a working style (developer-led assistance or
+bounded agent-led execution), then choose a process (Copilot-native or Spec Kit).
+Either process can support either style. Keep one dimension constant when
+comparing the other.
 
 For the website version, see the [tutorial landing page](./index.md).
 Repository owners can follow the [GitHub Pages publishing walkthrough](./publishing.md).
@@ -24,16 +34,21 @@ By the end, you should be able to:
 3. Review a plan before authorizing edits.
 4. Verify behavior rather than accepting a confident answer or HTTP 200.
 5. Explain a suggestion you rejected and defend a workflow choice with evidence.
+6. Connect VS Code, Python, tests, and Copilot to the same development environment.
+7. Explain which engineering responsibilities change with AI and which stay human.
 
 | Step | Material | Suggested time |
 |------|----------|----------------|
+| Before class, if needed | [Windows + WSL + VS Code onboarding](./wsl-setup.md) | Allow 30-60 minutes, plus installation/restarts |
+| Orientation | [AI-assisted vs AI-native development](./ai-development.md) | 20 minutes |
 | 1 | [Shared setup and capability check](./setup.md) | 30 minutes |
 | 2 | [Repair lab](./repair-lab.md), through both paths | 35 minutes per path |
 | 3 | Repair comparison and discussion | 20 minutes |
 | 4 | [Feature lab](./feature-lab.md), through both paths | 75 minutes per path |
 | 5 | [Assessment and reflection](./assessment.md) | 30 minutes |
 
-Allow about five hours plus breaks; split across two or three sessions. These
+Allow about five hours for the shared setup, labs, and comparison, plus orientation,
+any OS onboarding, and breaks; split across two or three sessions. These
 are planning estimates, not measured classroom results. For a shorter workshop,
 complete setup and the paired repair lab; assign the feature lab as follow-up.
 
@@ -69,6 +84,8 @@ offline web experience.
 
 ## Further reading
 
+- [Windows/WSL onboarding](./wsl-setup.md)
+- [What changes with AI development](./ai-development.md)
 - [Standalone debugging lessons](../student-guide.md) and [tutor notes](../tutor-guide.md)
 - [Historical showcase](../github-copilot-learning-guide.md)
 - [Original Spec Kit artifacts](../../specs/001-f1-data-display/README.md)

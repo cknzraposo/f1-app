@@ -4,6 +4,10 @@ Use [shared setup](./setup.md) and a fresh Spec Kit worktree for each lab.
 Use the **same** [repair brief](./repair-lab.md) or
 [feature brief](./feature-lab.md) as Path A.
 
+Choose your [working style](./ai-development.md) separately from this process.
+You can use AI assistance while driving each task yourself, or let an agent
+execute approved tasks. Spec Kit's artifacts do not make a workflow autonomous.
+
 The repository includes [agents](../../.github/agents),
 [skills](../../.github/skills), and [templates](../../.specify/templates).
 These checked-in workflows are the course reference, not a promise of
@@ -56,10 +60,15 @@ instead of pretending that more documentation always improves quality.
 
 ## 4. Implement and verify
 
-After approval, run `speckit.implement` against the generated tasks.
-Require regression tests and the same opt-in acceptance command used in
-Path A. Review commands and diffs; Spec Kit does not make agent actions safe
-or generated tests correct.
+- **AI-assisted run:** take one generated task at a time. Ask for focused
+  explanations or suggestions, then drive implementation and test commands
+  yourself.
+- **AI-native run:** after approval, run `speckit.implement` against the generated
+  tasks, reviewing its scope and tool requests.
+
+Both styles require regression tests and the same opt-in acceptance command
+used in Path A. Review commands and diffs; Spec Kit does not make agent actions
+safe or generated tests correct.
 
 Run the application tests yourself. For the feature, complete the browser
 checklist. Compare implementation, spec, contracts and task status; a checked

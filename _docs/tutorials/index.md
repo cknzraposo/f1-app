@@ -1,86 +1,163 @@
-<div class="tutorial-hero" markdown="1">
+<div class="race-hero" markdown="1">
+<div class="hero-copy" markdown="1">
 
-<span class="eyebrow">A hands-on GitHub Copilot workshop</span>
+<span class="eyebrow">GITHUB COPILOT / HANDS-ON WORKSHOP</span>
 
-# Build with AI. Choose your process.
+# Build fast.<br><span>Think for yourself.</span>
 
-One Formula 1 project. Two development workflows. Learn to plan, implement,
-test, and challenge AI-generated solutions using your own judgement.
+AI is your co-driver. You're the engineer. Go from WSL setup to AI-assisted
+coding and agent-led development on a real Formula 1 project. Compare the
+workflows, challenge the output, and keep judgement in the driver's seat.
 
-[Start with setup](./setup.md) [Explore the two paths](#two-paths-one-project)
+[Start the workshop &rarr;](./setup.md) [Explore the workflows](#two-paths-one-finish-line)
 
-**About five hours &middot; Python + Git &middot; Beginner-intermediate developers**
+</div>
+<div class="hero-visual" markdown="1">
+
+![An original top-down race car illustration on an imaginary learning circuit](./assets/racecar.svg)
+
+<div class="telemetry"><span></span><span>MODE: HANDS-ON</span><span>DRIVER: YOU</span></div>
+
+</div>
+</div>
+
+<div class="session-stats">
+  <div><strong>02</strong><span>WORKFLOWS TO COMPARE</span></div>
+  <div><strong>02</strong><span>REAL-WORLD LABS</span></div>
+  <div><strong>~5 hrs</strong><span>LABS + COMPARISON</span></div>
+  <div><strong>01</strong><span>ENGINEER IN CONTROL</span></div>
+</div>
+
+<p class="section-label">THE BRIEF / A NEW WAY TO BUILD</p>
+
+## Learn the tools. Own the decisions.
+
+<div class="section-intro" markdown="1">
+
+New to the environment? [Set up Windows, WSL, Python, and VS Code](./wsl-setup.md).
+Then explore [AI-assisted versus AI-native development](./ai-development.md):
+when to ask for a focused suggestion, when to delegate a bounded task, and what
+you still need to understand, test, and review.
+
+Working style and workflow structure are different choices. You can use
+developer-led assistance or agent-led execution with **either** path below.
+Allow extra time for onboarding and the AI orientation.
 
 </div>
 
-## What you will build
+<p class="section-label">01 / PICK YOUR RACING LINE</p>
 
-You will repair a natural-language query that returns the wrong answer, then
-design an API and UI improvement that makes sample-data limitations visible.
-Both workflows start with the same requirements and acceptance checks.
+## Two paths. One finish line.
 
-This is not a contest between AI products. Both paths use GitHub Copilot;
-Spec Kit adds a more explicit specification-driven process.
-
-## Two paths, one project
+<p class="section-intro">The same F1 application. The same requirements. Two ways
+to work with Copilot. Find out how much process your task actually needs,
+instead of assuming that faster or more structured is always better.</p>
 
 <div class="path-grid" markdown="1">
 <div class="path-card" markdown="1">
 
-### Path A: Copilot-native
+<span class="lane-label">PATH A / THE QUICK LINE</span>
 
-**Explore &rarr; plan &rarr; approve &rarr; implement &rarr; verify**
+### Copilot-native
 
-Try a lightweight workflow. Learn to supply context, review a plan, constrain
-agent changes, and verify behavior yourself.
+Go from a clear brief to a reviewed plan, scoped changes, and working tests.
+Keep the process lightweight, with human approval at the important moments.
 
-[Follow Path A](./copilot-native.md)
+<span class="workflow-line">Explore &rarr; Plan &rarr; Approve<br>Implement &rarr; Verify</span>
 
-</div>
-<div class="path-card" markdown="1">
+Best question to ask: **How much structure is enough?**
 
-### Path B: Copilot + Spec Kit
-
-**Specify &rarr; clarify &rarr; plan &rarr; tasks &rarr; implement &rarr; verify**
-
-Try a structured workflow. Find out when specifications, contracts, task lists,
-and explicit checkpoints repay their overhead.
-
-[Follow Path B](./copilot-spec-kit.md)
+[Take the Copilot-native path &rarr;](./copilot-native.md)
 
 </div>
+<div class="path-card strategy" markdown="1">
+
+<span class="lane-label">PATH B / THE STRATEGY LINE</span>
+
+### Copilot + Spec Kit
+
+Make the requirements explicit. Work through specifications, contracts,
+and tasks before implementation, then check whether the extra structure paid off.
+
+<span class="workflow-line">Specify &rarr; Clarify &rarr; Plan<br>Tasks &rarr; Implement &rarr; Verify</span>
+
+Best question to ask: **When does structure earn its keep?**
+
+[Take the Spec Kit path &rarr;](./copilot-spec-kit.md)
+
+</div>
 </div>
 
-## Follow the workshop, step by step
+<p class="section-label">02 / FROM THE PIT LANE TO THE FINISH</p>
 
-| Step | What to do | Evidence to keep |
-|------|------------|------------------|
-| **1. Prepare** | [Install, run the baseline, and isolate the workflows](./setup.md) | Commit, environment, test results, capabilities |
-| **2. Choose a path** | Read [Path A](./copilot-native.md) or [Path B](./copilot-spec-kit.md) | Reviewed plan and a human approval checkpoint |
-| **3. Repair** | [Fix a successful request that returns the wrong data](./repair-lab.md) | Failing check, fix, regression test, passing checks |
-| **4. Extend** | [Make local data coverage visible in the API and UI](./feature-lab.md) | Contract, implementation, tests, browser observations |
-| **5. Compare** | Repeat on the other path from an independent baseline, then [assess the trade-offs](./assessment.md) | Decision record, rework, review effort, limitations |
+## Your weekend on the grid.
 
-Use the lesson menu to jump between the shared brief and your chosen workflow.
-The two paths are alternatives to compare, not sequential implementation steps.
-For a shorter session, complete setup and the paired repair lab first.
+<p class="section-intro">Get the project running, test both approaches on the same
+challenges, then make a decision backed by evidence. No blind acceptance.
+No points for generating more code.</p>
 
-## Before you begin
+<div class="race-plan" markdown="1">
+<div class="race-stage" markdown="1">
 
-- Basic Python knowledge, Git, a terminal, and Python 3.12+.
-- VS Code and suitable GitHub Copilot access for the AI-assisted work.
-- Time to review code and run checks, not just accept generated output.
+<span class="stage-number">01 / THE PIT LANE</span>
 
-**This website is the tutorial, not the running F1 application.** GitHub Pages
-serves static content; run FastAPI locally using the setup guide. You do not need
-Ollama, Azure, API keys, a database, or a frontend bundler for the core labs.
-Treat the local season files as data samples, not verified complete seasons.
+### Get race-ready.
 
-## For instructors and publishers
+Start with [Windows + WSL onboarding](./wsl-setup.md) or go straight to project
+setup. Run the app, connect Copilot, and record a passing baseline before edits.
 
-Use the [assessment rubric and pilot checklist](./assessment.md). The suggested
-timing is an estimate; complete a real instructor pilot before teaching.
+[Set up your environment &rarr;](./setup.md)
 
-To publish your own copy, follow the [GitHub Pages walkthrough](./publishing.md).
-The [source repository](https://github.com/cknzraposo/f1-app) also retains the
-original Spec Kit showcase and standalone debugging lessons.
+</div>
+<div class="race-stage" markdown="1">
+
+<span class="stage-number">02 / THE SPRINT</span>
+
+### Find the wrong turn.
+
+A request succeeds but returns the wrong data. Repair the query parser,
+challenge an AI suggestion, and prove the fix with a regression test.
+
+[Enter the repair lab &rarr;](./repair-lab.md)
+
+</div>
+<div class="race-stage" markdown="1">
+
+<span class="stage-number">03 / THE GRAND PRIX</span>
+
+### Build. Test. Defend.
+
+Add a data-coverage feature across the API and UI. Compare review effort,
+rework, and correctness across both paths.
+
+[Enter the feature lab &rarr;](./feature-lab.md)
+
+</div>
+</div>
+
+Repeat the labs on the other path from an independent baseline, then
+[compare your evidence and reflect](./assessment.md). The paths are alternatives
+to evaluate, not sequential implementation steps. Short on time? Start with
+setup and the paired repair lab.
+
+<div class="pit-note" markdown="1">
+<span class="pit-icon" aria-hidden="true">i</span>
+<div markdown="1">
+
+### The workshop is online. Your F1 app runs locally.
+
+GitHub Pages serves this tutorial; run FastAPI locally using the setup guide.
+You'll need basic Python, Git, Python 3.12+, VS Code, and suitable Copilot access.
+No runtime LLM, API keys, database, or frontend bundler is required for the labs.
+The checked-in season files are samples, not verified complete seasons.
+
+</div>
+</div>
+
+## In the instructor's garage.
+
+Use the [assessment rubric and pilot checklist](./assessment.md) to teach the
+workshop. Timing is an estimate, so complete an instructor pilot before class.
+The [publishing walkthrough](./publishing.md) explains how to deploy your own copy.
+The [source repository](https://github.com/cknzraposo/f1-app) retains the original
+Spec Kit showcase and standalone debugging lessons.

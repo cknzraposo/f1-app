@@ -50,6 +50,11 @@ The **F1 Data API** is a lightweight REST API that provides access to Formula 1 
 
 ## WSL Setup Guide for Beginners
 
+For current, end-to-end instructions use the
+[Windows + WSL onboarding guide](./tutorials/wsl-setup.md), including VS Code's
+WSL connection, interpreter selection, Copilot access, and verification.
+The steps below are retained as part of the original showcase.
+
 ### Prerequisites
 
 - Windows 10/11
