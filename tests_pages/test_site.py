@@ -131,7 +131,7 @@ class BuiltSiteTests(unittest.TestCase):
 
     def test_landing_and_all_lessons_exist(self):
         for name in [
-            "index", "wsl-setup", "ai-development", "setup", "copilot-native", "copilot-spec-kit",
+            "index", "native-setup", "wsl-setup", "ai-development", "setup", "copilot-native", "copilot-spec-kit",
             "repair-lab", "feature-lab", "assessment", "publishing",
         ]:
             with self.subTest(page=name):
@@ -203,7 +203,19 @@ class BuiltSiteTests(unittest.TestCase):
     def test_landing_links_to_environment_and_development_guides(self):
         links = self.pages[self.site / "index.html"].links
         self.assertIn("wsl-setup.html", links)
+        self.assertIn("native-setup.html", links)
         self.assertIn("ai-development.html", links)
+
+    def test_wsl_is_optional_and_native_routes_are_available(self):
+        for name in ["index", "setup", "wsl-setup", "native-setup"]:
+            with self.subTest(page=name):
+                html = (self.site / f"{name}.html").read_text(encoding="utf-8")
+                self.assertIn("WSL is optional", html)
+        native = self.pages[self.site / "native-setup.html"]
+        self.assertTrue({
+            "native-windows-powershell", "macos-terminal",
+            "bash-based-spec-kit-helpers", "powershell-equivalents-for-the-comparison",
+        }.issubset(native.ids))
 
     def test_theme_changes_trigger_both_workflow_builds(self):
         workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")

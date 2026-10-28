@@ -1,15 +1,21 @@
 # Shared setup and reproducible comparison
 
-Use this setup for both [learning paths](./README.md). Commands assume Linux,
-macOS, or WSL with Git and Python 3.12+ installed. Native Windows users can use
-PowerShell activation (`.venv\Scripts\Activate.ps1`) and equivalent file moves;
-the worktree and Python commands are otherwise the same.
+Use this setup for both [learning paths](./README.md). **WSL is optional**:
+choose the environment that is available and approved on your machine.
 
-**New to Windows/WSL?** Follow the [step-by-step WSL onboarding](./wsl-setup.md)
-first. It covers Windows versus Linux commands, VS Code's WSL connection,
-the Python interpreter, Copilot sign-in, and your first running app.
+| Environment | First-time onboarding |
+|-------------|-----------------------|
+| Native Windows / PowerShell | [Windows without WSL](./native-setup.md#native-windows-powershell) |
+| macOS / Terminal | [Native macOS](./native-setup.md#macos-terminal) |
+| Windows / WSL | [WSL onboarding](./wsl-setup.md) |
+| Linux with Python 3.12+ and Git already installed | Continue below |
 
-Already cloned the project and installed its dependencies through that guide?
+The shell snippets below are Bash-style examples for Linux, macOS, or WSL.
+Do not paste them unchanged into PowerShell. Use the native guide's
+[PowerShell comparison equivalents](./native-setup.md#powershell-equivalents-for-the-comparison)
+and explicit Windows `.venv` interpreter commands; activation is optional.
+
+Already cloned the project and installed its dependencies through an onboarding guide?
 Skip the installation commands below and continue with the capability check.
 Before comparing workflows, read
 [AI-assisted versus AI-native development](./ai-development.md): working style
@@ -42,8 +48,9 @@ uvicorn app.api_server:app --reload --host 127.0.0.1 --port 8000
 
 Open `/docs` and `/static/index.html` at `http://127.0.0.1:8000`.
 Run only one worktree's server on that port at a time; stop it with Ctrl+C.
-For Windows networking, interpreter selection, or editor setup problems, use
-the [WSL troubleshooting guide](./wsl-setup.md#troubleshooting).
+For interpreter or editor problems, use the
+[native-platform troubleshooting](./native-setup.md#troubleshooting) or
+[WSL troubleshooting](./wsl-setup.md#troubleshooting) guide for your environment.
 
 ## Capability and access check
 
@@ -93,8 +100,9 @@ git worktree add -b tutorial/feature-speckit ../f1-feature-speckit "$BASE"
 ```
 
 Open **one worktree per VS Code window**, not all in one multi-root workspace.
-Create and activate a `.venv` and install the recorded dependency versions in
-each. Select that interpreter in VS Code. Verify `pwd` and `git branch --show-current`
+Create a separate `.venv` and install the recorded dependency versions in each.
+Activate it or use its interpreter directly as in the native setup guide.
+Select that interpreter in VS Code. Verify your working directory and `git branch --show-current`
 before every lab command. Never implement the feature on top of a repair
 solution when comparing paths.
 
@@ -141,6 +149,12 @@ them, use a supported Local session or explicitly attach and follow the
 checked-in workflow files, recording that fallback. Do not silently install the
 latest CLI over the repository. The historical generated release is unknown;
 record the commit of these files and any separately installed CLI version.
+
+Shell support is separate from workflow discovery. This checkout's Spec Kit
+automation invokes Bash helpers, not PowerShell equivalents. Native Windows
+users can use approved Git Bash or the
+[manual, template-based variant](./native-setup.md#if-bash-is-also-unavailable).
+Record that difference rather than claiming identical automation.
 
 ## Safety and evidence
 

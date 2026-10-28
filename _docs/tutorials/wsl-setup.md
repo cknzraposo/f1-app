@@ -1,11 +1,14 @@
 # Get race-ready: Windows, WSL, and VS Code
 
-Start here if you are setting up this project on Windows for the first time.
+Start here if you choose WSL for this project on Windows.
 You will finish with the F1 app running in Linux, VS Code connected to that
 environment, and Copilot ready to help you develop it.
 
-Already on Linux or macOS? Use the [shared project setup](./setup.md).
-WSL is a Windows development environment, not an AI prerequisite.
+**WSL is optional.** If it is unavailable or blocked, follow the
+[native Windows instructions](./native-setup.md#native-windows-powershell).
+On a Mac, use the [native macOS instructions](./native-setup.md#macos-terminal);
+WSL is a Windows feature, not an AI or application prerequisite.
+Linux users can go directly to [shared project setup](./setup.md).
 
 You need a WSL-compatible, supported Windows environment, permission to install
 development tools, and internet access for downloads and Copilot. Check

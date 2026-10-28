@@ -13,6 +13,11 @@ The repository includes [agents](../../.github/agents),
 These checked-in workflows are the course reference, not a promise of
 compatibility with every future Spec Kit release or Copilot harness.
 
+**Platform caveat:** the checked-in automation invokes Bash helpers. WSL is not
+required, but PowerShell alone does not execute those helpers. Native Windows
+users should read the [Git Bash and manual-variant options](./native-setup.md#bash-based-spec-kit-helpers)
+before starting. macOS users can invoke helpers with Bash from Terminal.
+
 ## 1. Inspect the existing constitution
 
 Read [the constitution](../../.specify/memory/constitution.md) and shared project

@@ -5,7 +5,7 @@
 
 # Build fast.<br><span>Think for yourself.</span>
 
-AI is your co-driver. You're the engineer. Go from WSL setup to AI-assisted
+AI is your co-driver. You're the engineer. Go from local setup to AI-assisted
 coding and agent-led development on a real Formula 1 project. Compare the
 workflows, challenge the output, and keep judgement in the driver's seat.
 
@@ -34,7 +34,8 @@ workflows, challenge the output, and keep judgement in the driver's seat.
 
 <div class="section-intro" markdown="1">
 
-New to the environment? [Set up Windows, WSL, Python, and VS Code](./wsl-setup.md).
+New to the environment? Choose [native Windows or macOS](./native-setup.md),
+or [Windows with WSL](./wsl-setup.md). WSL is optional, not a workshop requirement.
 Then explore [AI-assisted versus AI-native development](./ai-development.md):
 when to ask for a focused suggestion, when to delegate a bounded task, and what
 you still need to understand, test, and review.
@@ -103,8 +104,9 @@ No points for generating more code.</p>
 
 ### Get race-ready.
 
-Start with [Windows + WSL onboarding](./wsl-setup.md) or go straight to project
-setup. Run the app, connect Copilot, and record a passing baseline before edits.
+Start with [native Windows or macOS](./native-setup.md),
+[Windows + WSL](./wsl-setup.md), or shared project setup. Run the app,
+connect Copilot, and record a passing baseline before edits.
 
 [Set up your environment &rarr;](./setup.md)
 

@@ -1,5 +1,5 @@
 site_name: F1 Copilot Workshop
-site_description: Learn AI-assisted and AI-native development, from WSL setup to practical Copilot and Spec Kit labs.
+site_description: Learn AI-assisted and AI-native development on Windows, macOS, or WSL with practical Copilot and Spec Kit labs.
 site_url: https://cknzraposo.github.io/f1-app/
 repo_url: https://github.com/cknzraposo/f1-app
 repo_name: Source repository
@@ -21,6 +21,7 @@ theme:
 nav:
   - Start here: index.md
   - "1. Get race-ready":
+      - "Native Windows + macOS": native-setup.md
       - "Windows + WSL": wsl-setup.md
       - "Project setup": setup.md
   - "2. Work with AI":

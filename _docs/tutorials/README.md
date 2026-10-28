@@ -3,7 +3,8 @@
 Go from setting up a development environment to making and reviewing a real
 AI-supported change. Build judgement, not dependence on generated code.
 
-Start with [Windows/WSL onboarding](./wsl-setup.md) if needed, then learn
+Start with [native Windows/macOS setup](./native-setup.md) or
+[Windows/WSL onboarding](./wsl-setup.md) if needed. WSL is optional. Then learn
 [what changes with AI-assisted and AI-native development](./ai-development.md).
 Compare two ways of organizing that work on the same FastAPI and
 vanilla-JavaScript application:
@@ -39,7 +40,7 @@ By the end, you should be able to:
 
 | Step | Material | Suggested time |
 |------|----------|----------------|
-| Before class, if needed | [Windows + WSL + VS Code onboarding](./wsl-setup.md) | Allow 30-60 minutes, plus installation/restarts |
+| Before class, if needed | [Native Windows/macOS](./native-setup.md) or [Windows + WSL](./wsl-setup.md) onboarding | Allow 30-60 minutes, plus installation/restarts |
 | Orientation | [AI-assisted vs AI-native development](./ai-development.md) | 20 minutes |
 | 1 | [Shared setup and capability check](./setup.md) | 30 minutes |
 | 2 | [Repair lab](./repair-lab.md), through both paths | 35 minutes per path |
@@ -85,6 +86,7 @@ offline web experience.
 ## Further reading
 
 - [Windows/WSL onboarding](./wsl-setup.md)
+- [Native Windows and macOS setup](./native-setup.md)
 - [What changes with AI development](./ai-development.md)
 - [Standalone debugging lessons](../student-guide.md) and [tutor notes](../tutor-guide.md)
 - [Historical showcase](../github-copilot-learning-guide.md)

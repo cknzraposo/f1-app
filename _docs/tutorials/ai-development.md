@@ -4,8 +4,9 @@ This project is a working showcase, not just a collection of prompts. Use the
 F1 application to see how AI changes the way you understand requirements,
 implement changes, test results, and decide what to ship.
 
-First get the app running with [Windows/WSL onboarding](./wsl-setup.md) or
-[shared setup](./setup.md). An agent cannot compensate for an unknown baseline
+First get the app running with [native Windows/macOS setup](./native-setup.md),
+[Windows/WSL onboarding](./wsl-setup.md), or [shared Linux setup](./setup.md).
+An agent cannot compensate for an unknown baseline
 or an editor connected to the wrong interpreter.
 
 ## Two working styles, one accountable engineer

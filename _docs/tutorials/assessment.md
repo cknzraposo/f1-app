@@ -73,6 +73,9 @@ Before teaching:
       "AI-native" or that Spec Kit requires agent-led implementation.
 - [ ] Check the [WSL onboarding](./wsl-setup.md) on the learners' Windows setup,
       including editor connection, interpreter, baseline tests, and local UI.
+- [ ] Provide the [native Windows/macOS route](./native-setup.md) when WSL is
+      unavailable or inappropriate. Check Bash helper availability separately
+      and label manual Spec Kit variants in the comparison.
 - [ ] Publish a clean course revision/tag containing these materials and record
       its full commit. Do not publish completed feature solutions in the starter.
 - [ ] Install requirements in a fresh environment and capture the application

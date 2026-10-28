@@ -9,6 +9,8 @@ application, from environment setup to reviewed, tested changes.
 
 - **[Windows + WSL onboarding](_docs/tutorials/wsl-setup.md):** install the tools,
   connect VS Code, choose the right Python environment, and run the app.
+- **[Native Windows and macOS setup](_docs/tutorials/native-setup.md):** run
+  without WSL, with PowerShell/Terminal commands and Spec Kit shell caveats.
 - **[What changes with AI development](_docs/tutorials/ai-development.md):**
   compare developer-led assistance with bounded agent-led execution, and learn
   what remains your responsibility.
@@ -62,8 +64,9 @@ Copilot assists development; the application's optional Ollama/Azure integration
 
 ### Prerequisites
 
-On Windows, start with the [WSL setup walkthrough](_docs/tutorials/wsl-setup.md)
-for the complete OS, editor, Python, Git, and Copilot onboarding.
+Choose [native Windows or macOS setup](_docs/tutorials/native-setup.md), or the
+[Windows + WSL walkthrough](_docs/tutorials/wsl-setup.md), for complete editor,
+Python, Git, and Copilot onboarding. **WSL is optional.**
 
 - Python 3.12 or higher
 - pip (Python package manager)
@@ -132,6 +135,7 @@ curl http://localhost:8000/api/seasons/2023/standings | jq
 - **[API Documentation](_docs/readme.md)** - Comprehensive API endpoint reference
 - **[Dual-path Tutorial](_docs/tutorials/README.md)** - Shared setup, Copilot-native and Spec Kit workflows
 - **[Windows + WSL Setup](_docs/tutorials/wsl-setup.md)** - First-time environment and editor onboarding
+- **[Native Windows and macOS Setup](_docs/tutorials/native-setup.md)** - Run without WSL; includes shell and activation caveats
 - **[AI-assisted vs AI-native Development](_docs/tutorials/ai-development.md)** - Working styles, prompts, responsibilities, and trade-offs
 - **[Comparison and Assessment](_docs/tutorials/assessment.md)** - Evidence, trade-offs, and instructor pilot checklist
 - **[Historical Copilot Learning Guide](_docs/github-copilot-learning-guide.md)** - Original development narrative + WSL setup
