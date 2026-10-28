@@ -2,11 +2,18 @@
 
 A lightweight, localised fast REST API for querying Formula 1 historical data (1984-2024). Built with FastAPI using a **keyword-first, LLM-optional** architecture for maximum speed and reliability.
 
-## Built with Github Speckit
+## Learn AI-assisted development: two paths
 
-This project demonstrates how the F1 Data API was built using GitHub Copilot using [Github Speckit][Github Speckit](https://github.com/github/spec-kit) and provides step-by-step instructions for setting up the project on Windows Subsystem for Linux (WSL). 
+Use the same F1 application to compare **Copilot-native development** with **Copilot + [Spec Kit](https://github.com/github/spec-kit)**. Both paths use GitHub Copilot; the difference is how much workflow structure you choose.
 
-This is meant as a demo for developers learning GitHub Copilot's capabilities.
+| Path | Workflow | Investigate |
+|------|----------|-------------|
+| [A: Copilot-native](_docs/tutorials/copilot-native.md) | Explore, plan, approve, implement, verify | When is a lightweight workflow sufficient? |
+| [B: Copilot + Spec Kit](_docs/tutorials/copilot-spec-kit.md) | Specify, clarify, plan, tasks, implement, verify | When do explicit artifacts repay their overhead? |
+
+**[Start the tutorial](_docs/tutorials/README.md)** for shared setup, a paired debugging lab, a cross-layer feature lab, acceptance checks, and a judgement-based assessment. The original Spec Kit walkthrough remains available as historical material.
+
+Copilot assists development; the application's optional Ollama/Azure integration is a separate concern. Neither runtime LLM is required for these lessons. GitHub Copilot access is required for the AI-assisted portions.
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-009688.svg)](https://fastapi.tiangolo.com)
@@ -92,8 +99,10 @@ curl http://localhost:8000/api/seasons/2023/standings | jq
 ## 📖 Documentation
 
 - **[API Documentation](_docs/readme.md)** - Comprehensive API endpoint reference
-- **[GitHub Copilot Learning Guide](_docs/github-copilot-learning-guide.md)** - How this app was built with Copilot + WSL setup guide
-- **[Architecture Deep Dive](_docs/ARCHITECTURE.md)** - System design and architecture details
+- **[Dual-path Tutorial](_docs/tutorials/README.md)** - Shared setup, Copilot-native and Spec Kit workflows
+- **[Comparison and Assessment](_docs/tutorials/assessment.md)** - Evidence, trade-offs, and instructor pilot checklist
+- **[Historical Copilot Learning Guide](_docs/github-copilot-learning-guide.md)** - Original development narrative + WSL setup
+- **[Architecture Deep Dive](_docs/architecture.md)** - System design and architecture details
 - **[Keyword-First Architecture](_docs/keyword-first-architecture.md)** - Why we prioritize keywords over LLMs
 - **[Testing Lessons](_docs/testing-lessons.md)** - Reproducing and understanding common test failures
 - **[Student Guide](_docs/student-guide.md)** - Step-by-step "break it, fix it" debugging lessons for learners
@@ -197,7 +206,7 @@ This project serves as a demonstration of:
 - **Keyword-first architecture** for AI applications
 - **Efficient caching strategies** with Python
 
-See the [GitHub Copilot Learning Guide](_docs/github-copilot-learning-guide.md) for detailed examples and exercises.
+Start with the [Dual-path Tutorial](_docs/tutorials/README.md). Use the [Historical Copilot Learning Guide](_docs/github-copilot-learning-guide.md) to compare the original narrative with your own measured results.
 
 ## 📄 License
 

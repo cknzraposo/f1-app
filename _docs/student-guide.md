@@ -2,6 +2,11 @@
 
 This guide uses this F1 app to teach debugging. In each lesson you **break the app on purpose**, read the error, find the cause, and then fix it. Each lesson is based on a real failure from this repository's test suite. The background for each failure is in [Testing Lessons](./testing-lessons.md).
 
+For the AI-assisted comparison course, start with the [dual-path tutorial](./tutorials/README.md).
+It reuses the parser-priority lesson with shared acceptance checks for both
+Copilot-native and Copilot + Spec Kit workflows. The lessons below also remain
+usable without Copilot.
+
 Work through the lessons in order. Each one takes about 15–25 minutes.
 
 ---
@@ -48,10 +53,10 @@ source .venv/bin/activate          # Windows PowerShell: .venv\Scripts\Activate.
 ### Step 2 — Install dependencies
 
 ```bash
-python -m pip install -r requirements.txt httpx
+python -m pip install -r requirements.txt
 ```
 
-`httpx` is required by FastAPI's `TestClient`, which the API tests use. It is not in `requirements.txt` yet. Spotting missing dependencies like this is part of the exercise.
+`httpx`, required by FastAPI's `TestClient`, is included in `requirements.txt`.
 
 ### Step 3 — Run the tests and record the baseline
 
@@ -464,7 +469,7 @@ git status          # confirm you left no scratch files or unintended changes
 Pick one or more:
 
 1. **Add a keyword pattern.** Support `"fastest laps 2023"` in [query_parser.py](../app/query_parser.py). Add a parser method, place it in the correct position in `parse()`, and write a test. See [Keyword-First Architecture](./keyword-first-architecture.md).
-2. **Fix the missing dependency.** Add `httpx` to `requirements.txt`. Should it go in a separate `requirements-dev.txt`? Explain your choice.
+2. **Review test dependencies.** `httpx` is now included in `requirements.txt`. Should test-only dependencies go in a separate `requirements-dev.txt`? Explain your choice and verify a clean installation on a disposable branch.
 3. **Add CI.** Create a GitHub Actions workflow that installs dependencies and runs `python -m pytest -q tests` on every push.
 4. **Investigate the warnings.** Run the tests and read the `DeprecationWarning` messages. Which package produces them? Would upgrading FastAPI remove them? Record a new baseline before and after any change.
 5. **Write your own break-it lesson.** Find another fragile assumption in the tests, reproduce it, and write it up in the same five-step format.

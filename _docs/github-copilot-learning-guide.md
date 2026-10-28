@@ -1,5 +1,15 @@
 # F1 App: GitHub Copilot Learning Guide & WSL Setup
 
+> **Historical walkthrough, not the current course entry point.** Start with the
+> [dual-path tutorial](./tutorials/README.md) to compare Copilot-native development
+> with Copilot + Spec Kit. This narrative is retained to explain the original
+> showcase, not as evidence that a new agent will produce identical results.
+> The existing [Spec Kit artifacts](../specs/001-f1-data-display/README.md) are dated
+> December 26, 2025; their exact originating Spec Kit release is not recorded.
+> Do not infer completion from their historical status labels or overwrite them
+> when upgrading tooling. Follow the shared tutorial setup rather than the older
+> dependency lists below.
+
 This project demonstrates how the F1 Data API was built using GitHub Copilot using Github Speckit and provides step-by-step instructions for setting up the project on Windows Subsystem for Linux (WSL). Perfect for developers learning GitHub Copilot's capabilities.
 
 ---
@@ -730,4 +740,3 @@ explaining how this feature works, including:
 - [Ergast F1 API](https://api.jolpi.ca/ergast/)
 - [Project README](./readme.md)
 - [Architecture Deep Dive](./ARCHITECTURE.md)
-

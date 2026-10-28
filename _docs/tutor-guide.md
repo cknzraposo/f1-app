@@ -2,6 +2,11 @@
 
 This guide supports the [Student Guide](./student-guide.md). Students follow the step-by-step instructions there. This guide covers what tutors need to run the sessions: timing, setup checks, answer notes, common misconceptions, and assessment ideas.
 
+For the Copilot-native versus Copilot + Spec Kit course, use the
+[dual-path tutorial](./tutorials/README.md) and its
+[instructor pilot checklist and assessment](./tutorials/assessment.md).
+The schedule below remains the standalone, no-Copilot debugging workshop.
+
 The five lessons come from real failures in this repository's test suite (30 failing tests in the original baseline). The background for each is in [Testing Lessons](./testing-lessons.md).
 
 ---
@@ -51,7 +56,7 @@ Do this the day before on the same kind of machine the students will use:
 ```bash
 git clone https://github.com/cknzraposo/f1-app.git && cd f1-app
 python3 -m venv .venv && source .venv/bin/activate
-python -m pip install -r requirements.txt httpx
+python -m pip install -r requirements.txt
 python -m pytest -q tests                 # expect: 278 passed
 uvicorn app.api_server:app --port 8000    # open /static/index.html, then Ctrl+C
 ```
@@ -59,7 +64,7 @@ uvicorn app.api_server:app --port 8000    # open /static/index.html, then Ctrl+C
 Checklist:
 
 - [ ] The test suite passes on a clean clone.
-- [ ] `httpx` is installed. It is **not** in `requirements.txt`, and API tests fail to import without it. Either mention this up front or let students find it (see Extension 2).
+- [ ] Dependencies, including `httpx` for `TestClient`, install from `requirements.txt`.
 - [ ] On Debian/Ubuntu/WSL, `python3 -m venv` may fail without the `python3.X-venv` package. Install it beforehand.
 - [ ] On Python 3.14 you will see many `DeprecationWarning` lines from FastAPI/Starlette. Tell students in advance that these are warnings, not failures.
 - [ ] Decide whether students fork the repository or work on a local branch. A branch makes it easy to `git restore` files.
@@ -197,7 +202,7 @@ Give students a deliberately broken branch, such as one with the parser blocks s
 These match the Student Guide's extension challenges:
 
 1. **New keyword pattern.** Reinforces Lesson 2: students must choose where the new rule goes in `parse()`.
-2. **Missing `httpx` dependency.** Leads to a discussion of runtime and development dependencies (`requirements-dev.txt`).
+2. **Review test dependencies.** `httpx` is now included; discuss whether runtime and development dependencies should be separated (`requirements-dev.txt`) and verify a clean installation.
 3. **Continuous integration.** A GitHub Actions workflow that runs the suite. Discuss why CI catches problems like Lesson 2 that manual testing misses.
 4. **Dependency upgrade.** Record the warnings, upgrade FastAPI/Starlette on a branch, and compare against the baseline. This is good practice in making small, reviewable changes.
 5. **Student-authored lesson.** The best evidence of mastery is writing a new break-it lesson for the next group.
