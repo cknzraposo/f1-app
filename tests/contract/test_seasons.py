@@ -32,13 +32,25 @@ class TestSeasonEndpointsContract:
         assert len(data["seasons"]) > 0
     
     def test_get_seasons_returns_valid_year_range(self, client: TestClient):
-        """GET /api/seasons returns years between 1984-2024"""
+        """GET /api/seasons returns years from 1984 through the latest available season"""
         response = client.get("/api/seasons")
         data = response.json()
         
         assert data["firstSeason"] >= 1984
-        assert data["lastSeason"] <= 2024
+        assert data["lastSeason"] >= 2026
+        assert 2025 in data["seasons"]
+        assert 2026 in data["seasons"]
         assert data["count"] == len(data["seasons"])
+
+    def test_get_post_2024_seasons_returns_ergast_data(self, client: TestClient):
+        """GET /api/seasons/{year} returns post-2024 season data in Ergast format"""
+        for year in (2025, 2026):
+            response = client.get(f"/api/seasons/{year}")
+            data = response.json()
+
+            assert response.status_code == 200
+            assert data["MRData"]["RaceTable"]["season"] == str(year)
+            assert data["MRData"]["RaceTable"]["Races"]
     
     def test_get_season_returns_200_for_valid_year(self, client: TestClient):
         """GET /api/seasons/{year} returns 200 for valid season"""

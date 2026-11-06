@@ -9,6 +9,7 @@ Validates that endpoints follow the expected API contract:
 """
 import pytest
 from fastapi.testclient import TestClient
+from app.json_loader import get_available_seasons
 
 
 class TestConstructorEndpointsContract:
@@ -100,7 +101,7 @@ class TestConstructorEndpointsContract:
         assert response.status_code == 404
         error_message = response.json()["detail"]
         assert "1984" in error_message  # Should mention earliest available year
-        assert "2024" in error_message  # Should mention latest available year
+        assert str(max(get_available_seasons())) in error_message
     
     def test_get_constructor_season_results_validates_constructor_first(self, client: TestClient):
         """GET /api/constructors/{id}/seasons/{year} validates constructor before year"""

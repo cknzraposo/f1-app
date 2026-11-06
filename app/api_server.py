@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="F1 Data API",
-    description="REST API for querying Formula 1 historical data (1984-2024)",
+    description="REST API for querying Formula 1 historical data",
     version="1.0.0"
 )
 
@@ -66,7 +66,7 @@ def root():
     return {
         "name": "F1 Data API",
         "version": "1.0.0",
-        "description": "REST API for querying Formula 1 historical data (1984-2024)",
+        "description": "REST API for querying Formula 1 historical data",
         "documentation": "/docs",
         "endpoints": {
             "drivers": "/api/drivers",
@@ -86,7 +86,7 @@ def api_info() -> Dict[str, Any]:
     return {
         "name": "F1 Data API",
         "version": "1.0.0",
-        "description": "REST API for querying Formula 1 historical data (1984-2024)",
+        "description": "REST API for querying Formula 1 historical data",
         "documentation": "/docs",
         "endpoints": {
             "drivers": "/api/drivers",
@@ -104,4 +104,3 @@ def health_check() -> Dict[str, str]:
     Health check endpoint.
     """
     return {"status": "healthy"}
-

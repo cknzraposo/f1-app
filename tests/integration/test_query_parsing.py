@@ -85,7 +85,9 @@ class TestYearExtraction:
             ("2023 championship", 2023),
             ("who won in 2010", 2010),
             ("1984 standings", 1984),
-            ("2024 standings", 2024)
+            ("2024 standings", 2024),
+            ("2025 standings", 2025),
+            ("2026 standings", 2026)
         ]
         
         for query, expected_year in queries:
@@ -95,8 +97,8 @@ class TestYearExtraction:
                 assert data["data"]["season"] == expected_year
     
     def test_year_range_validation(self, client: TestClient):
-        """Years outside 1984-2024 are rejected"""
-        invalid_years = [1950, 1983, 2025, 2030]
+        """Years without available data are rejected"""
+        invalid_years = [1950, 1983, 2030]
         
         for year in invalid_years:
             response = client.post("/api/query", json={

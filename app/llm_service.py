@@ -36,7 +36,7 @@ class LLMService:
     
     def _get_system_prompt(self) -> str:
         """Get the system prompt for F1 query processing."""
-        return """You are an F1 data assistant with access to Formula 1 historical data from 1984-2024.
+        return """You are an F1 data assistant with access to Formula 1 historical data for all available seasons.
 
 Available API endpoints:
 - /api/seasons/{year}/standings - Get championship standings (drivers and constructors)
@@ -63,7 +63,7 @@ Examples:
 - "Tell me about Red Bull" -> {"action": "api_call", "endpoint": "/api/constructors/red_bull", "params": {}}
 
 If the question cannot be answered with available data, return:
-{"action": "respond", "message": "I don't have that information in the F1 database (1984-2024)."}
+{"action": "respond", "message": "I don't have that information in the available F1 season data."}
 
 Return ONLY valid JSON, no other text."""
     

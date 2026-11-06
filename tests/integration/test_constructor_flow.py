@@ -6,6 +6,7 @@ Validates that data flows correctly through all layers and business logic works 
 """
 import pytest
 from fastapi.testclient import TestClient
+from app.json_loader import get_available_seasons
 
 
 class TestConstructorDataFlow:
@@ -199,7 +200,7 @@ class TestConstructorSeasonDataIntegration:
         
         error = response.json()["detail"]
         assert "1984" in error, "Should mention earliest year"
-        assert "2024" in error, "Should mention latest year"
+        assert str(max(get_available_seasons())) in error, "Should mention latest year"
     
     def test_future_year_handled_gracefully(self, client: TestClient):
         """Future year request handled with helpful message"""

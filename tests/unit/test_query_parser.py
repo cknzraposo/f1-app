@@ -47,7 +47,9 @@ class TestYearExtraction:
             ("who won 2023 championship", 2023),
             ("2010 standings", 2010),
             ("season 1984", 1984),
-            ("championship in 2024", 2024)
+            ("championship in 2024", 2024),
+            ("championship in 2025", 2025),
+            ("championship in 2026", 2026)
         ]
         
         for text, expected in test_cases:
@@ -55,14 +57,13 @@ class TestYearExtraction:
             assert result == expected, f"Failed for: {text}"
     
     def test_extract_year_validates_range(self):
-        """Only extracts years in valid range (1984-2024)"""
+        """Only extracts years with available season data"""
         parser = QueryParser()
         
         invalid_cases = [
             "1950 season",  # Before 1984
             "1983 championship",  # Before 1984
-            "2025 standings",  # After 2024
-            "2030 races"  # After 2024
+            "2030 races"  # No season data
         ]
         
         for text in invalid_cases:
