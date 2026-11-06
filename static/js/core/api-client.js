@@ -7,6 +7,7 @@
 const cache = {
     drivers: null,
     constructors: null,
+    availableSeasons: null,
     seasons: new Map() // LRU-style cache for season data
 };
 
@@ -151,8 +152,13 @@ export async function getHeadToHead(driver1Id, driver2Id) {
  * Get available seasons
  */
 export async function getAvailableSeasons() {
-    // This endpoint doesn't exist yet, but we can infer from 1984-2024
-    return Array.from({ length: 2024 - 1984 + 1 }, (_, i) => 1984 + i).reverse();
+    if (cache.availableSeasons) {
+        return cache.availableSeasons;
+    }
+
+    const data = await fetchAPI('/api/seasons');
+    cache.availableSeasons = data.seasons.slice().reverse();
+    return cache.availableSeasons;
 }
 
 /**
@@ -161,6 +167,7 @@ export async function getAvailableSeasons() {
 export function clearCache() {
     cache.drivers = null;
     cache.constructors = null;
+    cache.availableSeasons = null;
     cache.seasons.clear();
 }
 

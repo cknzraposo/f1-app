@@ -1,6 +1,7 @@
 """Test error handling with suggestions for driver endpoints"""
 from fastapi.testclient import TestClient
 from app.api_server import app
+from app.json_loader import get_available_seasons
 
 client = TestClient(app)
 
@@ -24,7 +25,7 @@ def test_invalid_season_includes_available_range():
     error_detail = response.json()["detail"]
     assert "2050" in error_detail
     assert "1984" in error_detail
-    assert "2024" in error_detail
+    assert str(max(get_available_seasons())) in error_detail
 
 
 def test_completely_invalid_driver_no_crash():

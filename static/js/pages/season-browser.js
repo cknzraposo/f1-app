@@ -1,18 +1,16 @@
 /**
  * Season Browser Page Controller
- * Handles browsing F1 seasons (1984-2024) with race results and standings
+ * Handles browsing all available F1 seasons with race results and standings
  */
 
-import { getSeasonResults, getSeasonStandings, getSeasonWinners } from '../core/api-client.js';
+import { getSeasonResults, getSeasonStandings, getSeasonWinners, getAvailableSeasons } from '../core/api-client.js';
 import { parseQueryString } from '../utils/formatters.js';
 
-// Constants
-const MIN_YEAR = 1984;
-const MAX_YEAR = 2024;
 const DEFAULT_YEAR = 2023;
 
 // Page state
 let currentYear = DEFAULT_YEAR;
+let availableSeasons = [];
 let seasonData = null;
 let standingsData = null;
 let winnersData = null;
@@ -21,7 +19,9 @@ let viewMode = 'list'; // 'list' or 'detail'
 /**
  * Initialize the season browser page
  */
-function init() {
+async function init() {
+    availableSeasons = await getAvailableSeasons();
+
     // Check for year in URL
     const params = parseQueryString();
     if (params.year) {
@@ -89,7 +89,7 @@ function renderSeasonsList() {
     if (!container) return;
     
     const decades = [];
-    for (let year = MAX_YEAR; year >= MIN_YEAR; year--) {
+    for (const year of availableSeasons) {
         const decade = Math.floor(year / 10) * 10;
         let decadeGroup = decades.find(d => d.decade === decade);
         
@@ -147,7 +147,7 @@ function setupEventListeners() {
 function changeYear(delta) {
     const newYear = currentYear + delta;
     
-    if (newYear >= MIN_YEAR && newYear <= MAX_YEAR) {
+    if (availableSeasons.includes(newYear)) {
         showSeasonDetail(newYear);
     }
 }
@@ -165,11 +165,11 @@ function updateYearDisplay() {
     }
     
     if (prevBtn) {
-        prevBtn.disabled = currentYear <= MIN_YEAR;
+        prevBtn.disabled = currentYear <= Math.min(...availableSeasons);
     }
     
     if (nextBtn) {
-        nextBtn.disabled = currentYear >= MAX_YEAR;
+        nextBtn.disabled = currentYear >= Math.max(...availableSeasons);
     }
 }
 

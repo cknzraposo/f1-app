@@ -5,6 +5,7 @@ Tests the business logic for driver comparison statistics,
 head-to-head calculations, and data aggregation.
 """
 import pytest
+from app.json_loader import get_available_seasons
 from app.services.f1_service import F1Service
 
 
@@ -103,7 +104,7 @@ class TestHeadToHeadCalculations:
             # Season should be valid
             assert isinstance(race["season"], (str, int))
             season_int = int(race["season"])
-            assert 1984 <= season_int <= 2024
+            assert season_int in get_available_seasons()
     
     def test_head_to_head_with_year_range(self):
         """UNIT-H2H-006: Year range filtering works correctly"""
@@ -268,7 +269,7 @@ class TestComparisonDataQuality:
                 assert "points" in season
                 
                 # Season should be valid year
-                assert 1984 <= season["season"] <= 2024
+                assert season["season"] in get_available_seasons()
                 
                 # Wins should not exceed races
                 assert season["wins"] <= season["races"]

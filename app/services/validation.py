@@ -2,23 +2,19 @@
 Input validation helpers for F1 API endpoints.
 
 Provides validation functions for:
-- Year ranges (1984-2024)
+- Available season years
 - Driver IDs
 - Constructor IDs
 """
 
 from typing import Optional, List
 from difflib import get_close_matches
-
-
-# Valid year range for F1 data
-MIN_YEAR = 1984
-MAX_YEAR = 2024
+from ..json_loader import get_available_seasons
 
 
 def validate_year(year: int, raise_on_invalid: bool = True) -> bool:
     """
-    Validate that a year is within the valid F1 data range (1984-2024).
+    Validate that a year has available season data.
     
     Args:
         year: Year to validate
@@ -30,13 +26,11 @@ def validate_year(year: int, raise_on_invalid: bool = True) -> bool:
     Raises:
         ValueError: If year is outside valid range and raise_on_invalid=True
     """
-    is_valid = MIN_YEAR <= year <= MAX_YEAR
+    available_seasons = get_available_seasons()
+    is_valid = year in available_seasons
     
     if not is_valid and raise_on_invalid:
-        raise ValueError(
-            f"Year {year} is outside the valid range {MIN_YEAR}-{MAX_YEAR}. "
-            f"F1 data is available for seasons {MIN_YEAR} through {MAX_YEAR}."
-        )
+        raise ValueError(f"Year {year} is outside the available season range ({get_year_range_message()}).")
     
     return is_valid
 
@@ -125,7 +119,10 @@ def validate_constructor_id(
 
 def get_year_range_message() -> str:
     """Get a user-friendly message about the valid year range."""
-    return f"Valid years: {MIN_YEAR}-{MAX_YEAR}"
+    available_seasons = get_available_seasons()
+    if not available_seasons:
+        return "No seasons available"
+    return f"Valid years: {min(available_seasons)}-{max(available_seasons)}"
 
 
 def get_available_driver_ids(drivers_data: dict) -> List[str]:

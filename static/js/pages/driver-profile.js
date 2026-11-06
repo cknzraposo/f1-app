@@ -3,7 +3,7 @@
  * Handles driver profile page rendering and data fetching
  */
 
-import { getDriver, getDriverStats, getConstructors } from '../core/api-client.js';
+import { getDriver, getDriverStats, getConstructors, getAvailableSeasons } from '../core/api-client.js';
 import { showLoading, showError } from '../utils/dom-helpers.js';
 import { parseQueryString, escapeHtml } from '../utils/formatters.js';
 
@@ -313,10 +313,10 @@ async function renderTeams(statsData, container, driverId) {
     
     try {
         // Fetch all season data to calculate years per team
-        const maxYear = 2024;
+        const availableSeasons = await getAvailableSeasons();
         const promises = [];
         
-        for (let year = 1984; year <= maxYear; year++) {
+        for (const year of availableSeasons) {
             promises.push(
                 fetch(`/api/drivers/${driverId}/seasons/${year}`)
                     .then(res => res.json())
@@ -407,11 +407,10 @@ async function loadSeasonHistory(driverId, container) {
     showLoading(container, 'Loading season history...');
     
     try {
-        // Try to fetch results from available seasons (1984-2024)
-        const maxYear = 2024; // Database has data through 2024
+        const availableSeasons = await getAvailableSeasons();
         const promises = [];
         
-        for (let year = 1984; year <= maxYear; year++) {
+        for (const year of availableSeasons) {
             promises.push(
                 fetch(`/api/drivers/${driverId}/seasons/${year}`)
                     .then(res => res.json())
@@ -450,7 +449,7 @@ async function loadSeasonHistory(driverId, container) {
         if (validSeasons.length === 0) {
             container.innerHTML = `
                 <div class="note-message">
-                    No season history available for this driver in the database (1984-2024).
+                    No season history available for this driver in the database.
                 </div>
             `;
             return;
@@ -534,11 +533,10 @@ async function loadRaceResults(driverId, container) {
     showLoading(container, 'Loading race results...');
     
     try {
-        // Try to fetch results from available seasons (1984-2024)
-        const maxYear = 2024; // Database has data through 2024
+        const availableSeasons = await getAvailableSeasons();
         const promises = [];
         
-        for (let year = 1984; year <= maxYear; year++) {
+        for (const year of availableSeasons) {
             promises.push(
                 fetch(`/api/drivers/${driverId}/seasons/${year}`)
                     .then(res => res.json())
@@ -576,7 +574,7 @@ async function loadRaceResults(driverId, container) {
         if (allRaces.length === 0) {
             container.innerHTML = `
                 <div class="note-message">
-                    No race results available for this driver in the database (1984-2024).
+                    No race results available for this driver in the database.
                 </div>
             `;
             return;

@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from difflib import get_close_matches
 from typing import Dict, Any, Optional, List
+from .json_loader import get_available_seasons
 
 
 class QueryParser:
@@ -131,11 +132,11 @@ class QueryParser:
         return None
     
     def _extract_year(self, text: str) -> Optional[int]:
-        """Extract a year from text (1984-2024)."""
+        """Extract a year from text when season data is available."""
         match = re.search(self.YEAR_PATTERN, text)
         if match:
             year = int(match.group(1))
-            if 1984 <= year <= 2024:
+            if year in get_available_seasons():
                 return year
         return None
     

@@ -8,11 +8,6 @@ from ..json_loader import load_season_results, get_available_seasons
 
 router = APIRouter(prefix="/api/seasons", tags=["Seasons"])
 
-# Constants for year validation
-MIN_YEAR = 1984
-MAX_YEAR = 2024
-
-
 def validate_year(year: int) -> None:
     """
     Validate that year is within available range.

@@ -22,8 +22,9 @@ def fetch_season_results(year: int) -> Dict[str, Any]:
     """Fetch all race results for a season and return merged JSON."""
     url = f"{BASE_URL}/{year}/results.json"
     offset = 0
-    races: List[Dict[str, Any]] = []
+    races_by_round: Dict[tuple[str, str], Dict[str, Any]] = {}
     mrdata_master: Dict[str, Any] = {}
+    total = 0
 
     while True:
         params = {"limit": DEFAULT_LIMIT, "offset": offset}
@@ -35,15 +36,33 @@ def fetch_season_results(year: int) -> Dict[str, Any]:
 
         if not mrdata_master:
             mrdata_master = mrdata.copy()
+            mrdata_master["RaceTable"] = race_table.copy()
             mrdata_master["RaceTable"]["Races"] = []
+            total = int(mrdata.get("total", 0))
 
-        races.extend(batch)
+        for race in batch:
+            race_key = (race.get("season", str(year)), race.get("round", ""))
+            existing_race = races_by_round.get(race_key)
+            if existing_race is None:
+                races_by_round[race_key] = race
+                continue
 
-        if len(batch) < DEFAULT_LIMIT:
+            existing_results = existing_race.setdefault("Results", [])
+            result_ids = {
+                result.get("Driver", {}).get("driverId")
+                for result in existing_results
+            }
+            for result in race.get("Results", []):
+                result_id = result.get("Driver", {}).get("driverId")
+                if result_id not in result_ids:
+                    existing_results.append(result)
+                    result_ids.add(result_id)
+
+        offset += int(mrdata.get("limit", DEFAULT_LIMIT))
+        if not batch or offset >= total:
             break
-        offset += DEFAULT_LIMIT
 
-    mrdata_master["RaceTable"]["Races"] = races
+    mrdata_master["RaceTable"]["Races"] = list(races_by_round.values())
     return {"MRData": mrdata_master}
 
 def save_results(year: int, data: Dict[str, Any], folder: str = "f1data"):

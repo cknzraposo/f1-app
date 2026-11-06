@@ -178,7 +178,7 @@ class F1Service:
                 "url": driver_info.get("url")
             }
             if stats["totalRaces"] == 0:
-                response["note"] = "No race results found in available seasons (1984-2024)"
+                response["note"] = "No race results found in the available seasons"
         
         return response
     
@@ -520,7 +520,7 @@ class F1Service:
                 "url": constructor_info.get("url")
             }
             if stats["totalRaces"] == 0:
-                response["note"] = "No race results found in available seasons (1984-2024)"
+                response["note"] = "No race results found in the available seasons"
         
         return response
     
